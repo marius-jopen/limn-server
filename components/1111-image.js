@@ -2,10 +2,15 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 
-async function generateImage(outputDir, dynamicParameters) {
+async function generateImage(outputDir, imageRequest) {
+    // The imageRequest object contains all necessary parameters
+    const { prompt, steps, width, height } = imageRequest;
+
     const parameters = {
-        prompt: dynamicParameters.prompt,
-        steps: 20, // Default value, adjust as necessary
+        prompt: prompt,
+        steps: steps,
+        width: width,
+        height: height
     };
 
     try {
