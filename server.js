@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import dotenv from 'dotenv';
 import generateRoutes from './routes/generateRoutes.js';
+
+dotenv.config(); // Load environment variables
 
 const app = express();
 const port = 4000;
