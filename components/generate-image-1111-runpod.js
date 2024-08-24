@@ -20,7 +20,7 @@ async function generateImage1111RunPod(baseOutputDir, imageRequest) {
     };
 
     try {
-        const runPodUrl = "https://api.runpod.ai/v2/z1c2elgxyd6sst/runsync";
+        const runPodUrl = "https://api.runpod.ai/v2/ae5bt5c1o8e58f/runsync";
 
         const response = await fetch(runPodUrl, {
             method: "POST",
