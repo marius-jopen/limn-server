@@ -4,7 +4,7 @@ import path from 'path';
 
 const { RUNPOD_API_KEY } = process.env;
 
-async function generateImage1111RunPod(baseOutputDir, imageRequest) {
+async function generateImage1111RunPodServerless(baseOutputDir, imageRequest) {
     const { prompt, steps, width, height } = imageRequest;
 
     const parameters = {
@@ -62,4 +62,4 @@ async function generateImage1111RunPod(baseOutputDir, imageRequest) {
     }
 }
 
-export default generateImage1111RunPod;
+export default generateImage1111RunPodServerless;

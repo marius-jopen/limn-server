@@ -1,6 +1,6 @@
 import express from 'express';
 import generateImage1111Local from '../components/generate-image-1111-local.js';
-import generateImage1111RunPod from '../components/generate-image-1111-runpod.js';
+import generateImage1111RunPodServerless from '../components/generate-image-1111-runpod-serverless.js';
 import path from 'path';
 
 const router = express.Router();
@@ -22,10 +22,10 @@ router.post('/generate-image-1111-local', async (req, res) => {
 });
 
 // POST endpoint for generating images on RunPod
-router.post('/generate-image-1111-runpod', async (req, res) => {
+router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
   try {
     const { prompt, steps, width, height } = req.body;
-    const { imageUrl, info } = await generateImage1111RunPod(outputDir, { prompt, steps, width, height });
+    const { imageUrl, info } = await generateImage1111RunPodServerless(outputDir, { prompt, steps, width, height });
 
     res.json({ imageUrl, info });
   } catch (error) {
