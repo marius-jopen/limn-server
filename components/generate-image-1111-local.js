@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 
-async function generateImage(outputDir, imageRequest) {
+async function generateImage1111Local(baseOutputDir, imageRequest) {
     // The imageRequest object contains all necessary parameters
     const { prompt, steps, width, height } = imageRequest;
 
@@ -14,6 +14,9 @@ async function generateImage(outputDir, imageRequest) {
     };
 
     try {
+        // Define the specific output folder for this API
+        const specificOutputDir = path.join(baseOutputDir, 'image-1111-local');
+        
         const response = await fetch("http://127.0.0.1:7860/sdapi/v1/txt2img", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
@@ -26,14 +29,14 @@ async function generateImage(outputDir, imageRequest) {
         const timestamp = Date.now();
         const imageName = `image_${timestamp}.png`;
 
-        const outputPath = path.join(outputDir, imageName);
+        const outputPath = path.join(specificOutputDir, imageName);
 
-        await fs.promises.mkdir(outputDir, { recursive: true });
+        await fs.promises.mkdir(specificOutputDir, { recursive: true });
         await fs.promises.writeFile(outputPath, imageData);
 
         console.log(`Image saved at: ${outputPath}`);
 
-        const imageUrl = `/images/${imageName}`;
+        const imageUrl = `/output/image-1111-local/${imageName}`;
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {
@@ -42,4 +45,4 @@ async function generateImage(outputDir, imageRequest) {
     }
 }
 
-export default generateImage;
+export default generateImage1111Local;
