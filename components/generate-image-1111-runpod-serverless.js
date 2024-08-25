@@ -2,17 +2,15 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 
-const { RUNPOD_API_KEY } = process.env;
-
-async function generateImage1111RunPodServerless(baseOutputDir, imageRequest) {
+async function generateImage1111RunPodServerless(imageRequest) {
     const { prompt, steps, width, height } = imageRequest;
 
     const parameters = {
         input: {
-            prompt: prompt,
+            prompt,
             num_inference_steps: steps,
-            width: width,
-            height: height,
+            width,
+            height,
             num_outputs: 1,
             guidance_scale: 7.5,
             scheduler: "KLMS"
@@ -31,7 +29,10 @@ async function generateImage1111RunPodServerless(baseOutputDir, imageRequest) {
             body: JSON.stringify(parameters),
         });
 
-        // Ensure we handle the decompression and parsing properly
+        if (!response.ok) {
+            throw new Error(`RunPod API error: ${response.statusText}`);
+        }
+
         const jsonResponse = await response.json();
         console.log("Received image data:", jsonResponse.output.images[0]);
 
@@ -39,13 +40,12 @@ async function generateImage1111RunPodServerless(baseOutputDir, imageRequest) {
             throw new Error('No image data received from RunPod API.');
         }
 
-        // Access the base64-encoded image data
         const base64ImageData = jsonResponse.output.images[0];
         const imageData = Buffer.from(base64ImageData, 'base64');
         const timestamp = Date.now();
         const imageName = `image_${timestamp}.png`;
 
-        const specificOutputDir = path.join(baseOutputDir, 'image-1111-runpod');
+        const specificOutputDir = path.join(process.env.OUTPUT_DIR, 'image-1111-runpod');
         const outputPath = path.join(specificOutputDir, imageName);
 
         await fs.promises.mkdir(specificOutputDir, { recursive: true });
@@ -53,7 +53,9 @@ async function generateImage1111RunPodServerless(baseOutputDir, imageRequest) {
 
         console.log(`Image saved at: ${outputPath}`);
 
-        const imageUrl = `/output/image-1111-runpod/${imageName}`;
+        // Ensure the returned URL is correctly mapped to your web server's static file handling
+        const relativeImagePath = path.relative(process.env.OUTPUT_DIR, outputPath);
+        const imageUrl = `/output/${relativeImagePath.replace(/\\/g, '/')}`; // Normalize path separators for URL
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {

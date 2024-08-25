@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
+import config from '../config.js';
 
-async function generateImage1111Local(baseOutputDir, imageRequest) {
+async function generateImage1111Local(imageRequest) {
     const { prompt, steps, width, height } = imageRequest;
 
     const parameters = {
@@ -13,11 +14,7 @@ async function generateImage1111Local(baseOutputDir, imageRequest) {
     };
 
     try {
-        // Define the specific output folder for this API
-        const specificOutputDir = path.join(baseOutputDir, 'image-1111-local');
-        
-        // Make the request to the external API
-        const response = await fetch("http://127.0.0.1:7860/sdapi/v1/txt2img", {
+        const response = await fetch(config.generateImage1111LocalApi, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(parameters),
@@ -29,7 +26,6 @@ async function generateImage1111Local(baseOutputDir, imageRequest) {
 
         const jsonResponse = await response.json();
 
-        // Ensure the response contains image data
         if (!jsonResponse.images || !jsonResponse.images[0]) {
             throw new Error('No image data received from external API.');
         }
@@ -39,16 +35,16 @@ async function generateImage1111Local(baseOutputDir, imageRequest) {
         const timestamp = Date.now();
         const imageName = `image_${timestamp}.png`;
 
-        const outputPath = path.join(specificOutputDir, imageName);
+        const outputPath = path.join(config.outputDir, 'image-1111-local', imageName);
 
-        // Ensure the directory exists and write the image file
-        await fs.promises.mkdir(specificOutputDir, { recursive: true });
+        await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
         await fs.promises.writeFile(outputPath, imageData);
 
         console.log(`Image saved at: ${outputPath}`);
 
-        // Generate the URL to access the image
-        const imageUrl = `/output/image-1111-local/${imageName}`;
+        // Ensure the returned URL is correctly mapped to your web server's static file handling
+        const relativeImagePath = path.relative(config.outputDir, outputPath);
+        const imageUrl = `/output/${relativeImagePath.replace(/\\/g, '/')}`; // Normalize path separators for URL
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {

@@ -7,15 +7,14 @@ import generateRoutes from './routes/generateRoutes.js';
 dotenv.config(); // Load environment variables
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Serve static files from the output directory under the '/output' path
-const outputDir = path.join('C:\\Users\\mail\\Github\\limn-output');
-app.use('/output', express.static(outputDir));
+app.use('/output', express.static(path.join(process.env.OUTPUT_DIR)));
 
 // Use the generate routes under the '/api' path
 app.use('/api', generateRoutes);
