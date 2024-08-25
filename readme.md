@@ -12,3 +12,6 @@ node server.js
 
 # SD API on Runpod Pod
 https://3saeuqkzibgz0d-3001.proxy.runpod.net/docs
+
+# Notes
+- Progress for 1111 image generation does not work and it looks like it will not work
