@@ -16,7 +16,7 @@ async function generateImage1111RunpodPod(imageRequest) {
     };
 
     try {
-        const response = await fetch(config.generateImage1111RunpodPod, {
+        const response = await fetch(config.generateImage1111RunpodPod + "/sdapi/v1/txt2img", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(parameters),

@@ -16,7 +16,7 @@ async function generateImage1111Local(imageRequest) {
     };
 
     try {
-        const response = await fetch(config.generateImage1111LocalApi, {
+        const response = await fetch(config.generateImage1111LocalApi + "/sdapi/v1/txt2img", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(parameters),
