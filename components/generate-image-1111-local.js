@@ -4,6 +4,8 @@ import path from 'path';
 import config from '../config.js';
 
 async function generateImage1111Local(imageRequest) {
+    let subfolder = '/image-1111-local'
+    
     const { prompt, steps, width, height } = imageRequest;
 
     const parameters = {
@@ -30,12 +32,13 @@ async function generateImage1111Local(imageRequest) {
             throw new Error('No image data received from external API.');
         }
 
-        const base64ImageData = jsonResponse.images[0];
+        const base64ImageData = jsonResponse.output.images[0];
         const imageData = Buffer.from(base64ImageData, 'base64');
         const timestamp = Date.now();
         const imageName = `image_${timestamp}.png`;
 
-        const outputPath = path.join(config.outputDir, 'image-1111-local', imageName);
+        const specificOutputDir = path.join(process.env.OUTPUT_DIR, subfolder);
+        const outputPath = path.join(specificOutputDir, imageName);
 
         await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
         await fs.promises.writeFile(outputPath, imageData);

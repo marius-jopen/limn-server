@@ -3,45 +3,39 @@ import fs from 'fs';
 import path from 'path';
 import config from '../config.js';
 
-async function generateImage1111RunPodServerless(imageRequest) {
-    const subfolder = 'image-1111-runpod-serverless';
-
+async function generateImage1111RunpodPod(imageRequest) {
+    const subfolder = 'image-1111-runpod-pod';
+    
     const { prompt, steps, width, height } = imageRequest;
 
     const parameters = {
-        input: {
-            prompt,
-            num_inference_steps: steps,
-            width,
-            height,
-            num_outputs: 1,
-            guidance_scale: 7.5,
-            scheduler: "KLMS"
-        }
+        prompt: prompt,
+        steps: steps,
+        width: width,
+        height: height
     };
 
     try {
-        const response = await fetch(config.generateImage1111RunpodServerlessApi, {
+        const response = await fetch(config.generateImage1111RunpodPod, {
             method: "POST",
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.RUNPOD_API_KEY}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(parameters),
         });
 
         if (!response.ok) {
-            throw new Error(`RunPod API error: ${response.statusText}`);
+            throw new Error(`External API error: ${response.statusText}`);
         }
 
         const jsonResponse = await response.json();
-        console.log("Received image data:", jsonResponse.output.images[0]);
+        console.log("Received image data:", jsonResponse);
 
-        if (!jsonResponse.output || !jsonResponse.output.images || !jsonResponse.output.images[0]) {
-            throw new Error('No image data received from RunPod API.');
+        // Adjust according to the actual response structure
+        const base64ImageData = jsonResponse.images ? jsonResponse.images[0] : jsonResponse.output.images[0];
+        
+        if (!base64ImageData) {
+            throw new Error('No image data received from external API.');
         }
 
-        const base64ImageData = jsonResponse.output.images[0];
         const imageData = Buffer.from(base64ImageData, 'base64');
         const timestamp = Date.now();
         const imageName = `image_${timestamp}.png`;
@@ -60,9 +54,9 @@ async function generateImage1111RunPodServerless(imageRequest) {
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {
-        console.error('Error in generateImage1111RunPod:', error);
+        console.error('Error in generateImage1111RunpodPod:', error);
         throw error;
     }
 }
 
-export default generateImage1111RunPodServerless;
+export default generateImage1111RunpodPod;
