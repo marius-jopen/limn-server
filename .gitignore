@@ -1,0 +1,47 @@
+# Node.js
+node_modules
+
+# Output directories
+/output
+/vercel
+/.svelte-kit
+/build
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Svelte specific
+.svelte-kit/
+
+# MacOS specific
+.DS_Store
