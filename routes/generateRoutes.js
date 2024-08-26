@@ -45,12 +45,11 @@ router.post('/generate-image-1111-runpod-pod', async (req, res) => {
 // POST endpoint for generating images using Deforum on RunPod real pod
 router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
   try {
-    const imageRequest = req.body;
-    const { imageUrl, info } = await generateDeforum1111RunpodPod(imageRequest);
-    res.json({ imageUrl, info });
+    const result = await generateDeforum1111RunpodPod(req.body);
+    res.json(result);
   } catch (error) {
     console.error('Error in /generate-deforum-1111-runpod-pod:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
+    res.status(500).json({ message: error.message });
   }
 });
 
