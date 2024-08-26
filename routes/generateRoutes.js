@@ -36,7 +36,7 @@ router.post('/generate-image-1111-runpod-pod', async (req, res) => {
   try {
     const imageRequest = req.body;  // Receive the whole object
     const { imageUrl, info } = await generateImage1111RunpodPod(imageRequest); // Call the new function
-
+    
     res.json({ imageUrl, info });
   } catch (error) {
     console.error('Error in /generate-image-1111-runpod-pod:', error);
