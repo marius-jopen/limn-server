@@ -34,6 +34,7 @@ router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
 router.post('/generate-image-1111-runpod-pod', async (req, res) => {
   try {
     const imageRequest = req.body;
+    console.log(imageRequest)
     const { imageUrl, info } = await generateImage1111RunpodPod(imageRequest);
     res.json({ imageUrl, info });
   } catch (error) {
