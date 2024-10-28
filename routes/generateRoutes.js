@@ -1,4 +1,5 @@
 import express from 'express';
+import generateImage1111BasetenServerless from '../components/generate-image-1111-baseten-serverless.js';
 
 const router = express.Router();
 
