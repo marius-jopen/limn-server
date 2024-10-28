@@ -1,18 +1,18 @@
 import express from 'express';
-import generateImage1111BasetenServerless from '../components/generate-image-1111-baseten-serverless.js';
+import generateImage1111 from '../components/generate-image-1111.js';
 
 const router = express.Router();
 
-// POST endpoint for generating images on Baseten serverless
-router.post('/generate-image-1111-baseten-serverless', async (req, res) => {
+// POST endpoint for generating images on Baseten
+router.post('/generate-image-1111', async (req, res) => {
   try {
     const imageRequest = req.body;
-    const { imageUrl, info } = await generateImage1111BasetenServerless(imageRequest);
-    res.json({ imageUrl, info });
+    await generateImage1111(imageRequest);
+    res.json({ message: 'Request sent successfully' }); 
   } catch (error) {
-    console.error('Error in /generate-image-1111-baseten-serverless:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
+    console.error('Error in /generate-image-1111:', error);
+    res.status(500).json({ message: 'Error sending the request.' });
   }
 });
 
-export default router;
+export default router;  // Add this line to export the router
