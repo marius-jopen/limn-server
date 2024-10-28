@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the output directory under the '/output' path
-app.use('/output', express.static(path.join(process.env.OUTPUT_DIR)));
+app.use('/api/output', express.static(path.join(process.env.OUTPUT_DIR)));
 
 // Use the generate routes under the '/api' path
 app.use('/api', generateRoutes);
