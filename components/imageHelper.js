@@ -1,4 +1,3 @@
-// components/imageHelper.js
 import fs from 'fs';
 import path from 'path';
 
@@ -12,7 +11,6 @@ export async function saveImageData(jsonResponse, subfolder) {
     const imageData = Buffer.from(base64ImageData, 'base64');
     const timestamp = Date.now();
     const imageName = `image_${timestamp}.png`;
-
     const specificOutputDir = path.join(process.env.OUTPUT_DIR, subfolder);
     const outputPath = path.join(specificOutputDir, imageName);
 
