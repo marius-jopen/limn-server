@@ -9,6 +9,8 @@ async function generateDeforum1111RunpodPod(request) {
     }
 
     try {
+        console.log(config.generateImage1111RunpodPod + "/deforum_api/batches")
+        
         const response = await fetch(config.generateImage1111RunpodPod + "/deforum_api/batches", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
