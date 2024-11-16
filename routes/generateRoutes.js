@@ -61,7 +61,7 @@ router.get('/output', async (req, res) => {
     const outputDir = process.env.OUTPUT_DIR;
     const allFiles = await getAllFiles(outputDir);
     const images = allFiles
-      .filter(file => file.match(/\.(jpg|jpeg|png|gif)$/i))
+      .filter(file => file.match(/\.(txt|jpg|jpeg|png|gif)$/i))
       .map(file => {
         const relativePath = path.relative(outputDir, file);
         return `/${relativePath.replace(/\\/g, '/')}`;

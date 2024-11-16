@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import config from '../config.js';
-import { saveImageData } from './imageHelper.js';
+import { saveImageData } from './saveImageData.js';
+import { saveImageConfig } from './saveImageConfig.js';
 
 async function generateImage1111RunPodServerless(request) {
     const subfolder = 'image-1111-runpod-serverless';
@@ -12,7 +13,6 @@ async function generateImage1111RunPodServerless(request) {
     };
 
     try {
-        console.log("hohoho")
         const response = await fetch(config.generateImage1111RunpodServerlessApi, {
             method: "POST",
             headers: { 
@@ -27,7 +27,9 @@ async function generateImage1111RunPodServerless(request) {
         }
 
         const jsonResponse = await response.json();
-        const imageUrl = await saveImageData(jsonResponse, subfolder);
+        const timestamp = Date.now();
+        const imageUrl = await saveImageData(jsonResponse, subfolder, timestamp);
+        await saveImageConfig(parameters, subfolder, timestamp);
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {

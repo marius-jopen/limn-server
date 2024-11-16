@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export async function saveImageData(jsonResponse, subfolder) {
+export async function saveImageData(jsonResponse, subfolder, timestamp) {
     const base64ImageData = jsonResponse.images ? jsonResponse.images[0] : jsonResponse.output.images[0];
     
     if (!base64ImageData) {
@@ -9,7 +9,7 @@ export async function saveImageData(jsonResponse, subfolder) {
     }
 
     const imageData = Buffer.from(base64ImageData, 'base64');
-    const timestamp = Date.now();
+    // const timestamp = Date.now();
     const imageName = `image_${timestamp}.png`;
     const specificOutputDir = path.join(process.env.OUTPUT_DIR, subfolder);
     const outputPath = path.join(specificOutputDir, imageName);
