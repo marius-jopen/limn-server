@@ -12,6 +12,7 @@ async function generateImage1111RunPodServerless(request) {
     };
 
     try {
+        console.log("hohoho")
         const response = await fetch(config.generateImage1111RunpodServerlessApi, {
             method: "POST",
             headers: { 

@@ -37,7 +37,6 @@ router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
 router.post('/generate-image-1111-runpod-pod', async (req, res) => {
   try {
     const imageRequest = req.body;
-    console.log(imageRequest)
     const { imageUrl, info } = await generateImage1111RunpodPod(imageRequest);
     res.json({ imageUrl, info });
   } catch (error) {
@@ -68,7 +67,7 @@ router.get('/output', async (req, res) => {
         return `/${relativePath.replace(/\\/g, '/')}`;
       });
     
-    console.log('Available image paths:', images);
+    // console.log('Available image paths:', images);
     res.json({ images });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching images.' });
