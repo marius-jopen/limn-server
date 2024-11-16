@@ -4,6 +4,7 @@ import generateImage1111RunPodServerless from '../components/generate-image-1111
 import generateImage1111RunpodPod from '../components/generate-image-1111-runpod-pod.js';
 import generateDeforum1111RunpodPod from '../components/generate-deforum-1111-runpod-pod.js'; // Import the new function
 import { getAllFiles } from '../components/get-all-files.js';  // Add .js extension
+import { serveImages } from '../components/serveImages.js';
 
 import path from 'path';  // Add this import at the top with other imports
 
@@ -59,18 +60,23 @@ router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
 router.get('/output', async (req, res) => {
   try {
     const outputDir = process.env.OUTPUT_DIR;
-    const allFiles = await getAllFiles(outputDir);
-    const images = allFiles
-      .filter(file => file.match(/\.(txt|jpg|jpeg|png|gif)$/i))
-      .map(file => {
-        const relativePath = path.relative(outputDir, file);
-        return `/${relativePath.replace(/\\/g, '/')}`;
-      });
-    
-    // console.log('Available image paths:', images);
+    const images = await getAllFiles(outputDir);
     res.json({ images });
   } catch (error) {
+    console.error('Error:', error);
     res.status(500).json({ message: 'Error fetching images.' });
+  }
+});
+
+router.get('/output/*', async (req, res) => {
+  try {
+    const imagePath = req.params[0];
+    const response = await serveImages(imagePath);
+    res.setHeader('Content-Type', response.ContentType || 'image/jpeg');
+    response.Body.pipe(res);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(404).send('Image not found');
   }
 });
 
