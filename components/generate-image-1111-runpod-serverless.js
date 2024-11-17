@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import config from '../config.js';
-import { saveImageData } from './saveImageData.js';
+import { saveImageData } from './saveImageDataAws.js';
 import { saveImageConfig } from './saveImageConfig.js';
 
 async function generateImage1111RunPodServerless(request) {
