@@ -4,7 +4,7 @@ import generateImage1111RunPodServerless from '../components/generate-image-1111
 import generateImage1111RunpodPod from '../components/generate-image-1111-runpod-pod.js';
 import generateDeforum1111RunpodPod from '../components/generate-deforum-1111-runpod-pod.js'; // Import the new function
 import { getAllFiles } from '../components/get-all-files.js';  // Add .js extension
-import { serveImages } from '../components/serveImages.js';
+import { serveImages, deleteImage } from '../components/serveImages.js';
 
 import path from 'path';  // Add this import at the top with other imports
 
@@ -77,6 +77,17 @@ router.get('/output/*', async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(404).send('Image not found');
+  }
+});
+
+router.delete('/output/*', async (req, res) => {
+  try {
+    const imagePath = req.params[0];
+    await deleteImage(imagePath);
+    res.json({ message: 'File deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).json({ message: 'Error deleting file' });
   }
 });
 
