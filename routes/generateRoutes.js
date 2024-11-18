@@ -88,8 +88,8 @@ router.get('/output/*', async (req, res) => {
   }
 });
 
-app.get('/test', (req, res) => {
-  res.json({ message: 'Server is working!' });
+router.get('/test', (req, res) => {
+  res.json({ message: 'Test endpoint working!' });
 });
 
 export default router;
