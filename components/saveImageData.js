@@ -1,7 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
-export async function saveImageData(jsonResponse, subfolder, timestamp) {
+export async function saveImageData(jsonResponse, subfolder, timestamp, userId) {
     const base64ImageData = jsonResponse.images ? jsonResponse.images[0] : jsonResponse.output.images[0];
     
     if (!base64ImageData) {
@@ -10,7 +10,7 @@ export async function saveImageData(jsonResponse, subfolder, timestamp) {
 
     const imageData = Buffer.from(base64ImageData, 'base64');
     const imageName = `image_${timestamp}.png`;
-    const s3Key = `${subfolder}/${imageName}`;
+    const s3Key = `${userId}/${subfolder}/${imageName}`;
 
     // Initialize S3 client
     const s3Client = new S3Client({
@@ -34,7 +34,7 @@ export async function saveImageData(jsonResponse, subfolder, timestamp) {
         });
 
         await upload.done();
-        console.log(`Image uploaded to S3: ${s3Key}`);
+        // console.log(`Image uploaded to S3: ${s3Key}`);
 
         // Return the S3 URL
         const imageUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;

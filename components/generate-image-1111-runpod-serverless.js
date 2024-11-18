@@ -6,6 +6,9 @@ import { saveImageConfig } from './saveImageConfig.js';
 async function generateImage1111RunPodServerless(request) {
     const subfolder = 'image-1111-runpod-serverless';
 
+    console.log('Received request with userId:', request.userId);
+    // console.log('Full request object:', request);
+
     const parameters = {
         input: {
             ...request
@@ -28,8 +31,8 @@ async function generateImage1111RunPodServerless(request) {
 
         const jsonResponse = await response.json();
         const timestamp = Date.now();
-        const imageUrl = await saveImageData(jsonResponse, subfolder, timestamp);
-        await saveImageConfig(parameters, subfolder, timestamp);
+        const imageUrl = await saveImageData(jsonResponse, subfolder, timestamp, request.userId);
+        await saveImageConfig(parameters, subfolder, timestamp, request.userId);
 
         return { imageUrl, info: "Image generated and saved successfully!" };
     } catch (error) {

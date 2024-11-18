@@ -1,7 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
-export async function saveImageConfig(parameters, subfolder, timestamp) {
+export async function saveImageConfig(parameters, subfolder, timestamp, userId) {
     // Transform the parameters structure
     let transformedParams;
     if (parameters.input) {
@@ -20,7 +20,7 @@ export async function saveImageConfig(parameters, subfolder, timestamp) {
     }
 
     const txtFileName = `image_${timestamp}.txt`;
-    const s3Key = `${subfolder}/${txtFileName}`;
+    const s3Key = `${userId}/${subfolder}/${txtFileName}`;
 
     // Initialize S3 client
     const s3Client = new S3Client({
@@ -44,7 +44,7 @@ export async function saveImageConfig(parameters, subfolder, timestamp) {
         });
 
         await upload.done();
-        console.log(`Parameters uploaded to S3: ${s3Key}`);
+        // console.log(`Parameters uploaded to S3: ${s3Key}`);
 
         // Return the S3 URL
         const fileUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
