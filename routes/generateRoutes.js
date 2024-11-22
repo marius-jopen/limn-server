@@ -4,7 +4,7 @@ import generateImage1111RunPodServerless from '../components/generate-image-1111
 import generateImage1111RunpodPod from '../components/generate-image-1111-runpod-pod.js';
 import generateDeforum1111RunpodPod from '../components/generate-deforum-1111-runpod-pod.js'; // Import the new function
 import { getAllFiles } from '../components/get-all-files.js';  // Add .js extension
-import { serveImages } from '../components/serveImages.js';
+import { serveImages, deleteImage } from '../components/serveImages.js';
 
 import path from 'path';  // Add this import at the top with other imports
 
@@ -78,8 +78,9 @@ router.get('/output', async (req, res) => {
 
 router.get('/output/*', async (req, res) => {
   try {
+    const { userId } = req.query;
     const imagePath = req.params[0];
-    const response = await serveImages(imagePath);
+    const response = await serveImages(imagePath, userId);
     res.setHeader('Content-Type', response.ContentType || 'image/jpeg');
     response.Body.pipe(res);
   } catch (error) {
@@ -90,6 +91,25 @@ router.get('/output/*', async (req, res) => {
 
 router.get('/test', (req, res) => {
   res.json({ message: 'Test endpoint working!' });
+});
+
+router.delete('/output/*', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const imagePath = req.params[0];
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
+    console.log('Delete request received:', { userId, imagePath });
+    await deleteImage(imagePath, userId);
+    
+    res.status(200).json({ message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(404).json({ message: 'Error deleting image', error: error.message });
+  }
 });
 
 export default router;

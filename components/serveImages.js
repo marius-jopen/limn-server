@@ -22,23 +22,31 @@ async function serveImages(imagePath) {
   return s3Client.send(command);
 }
 
-async function deleteImage(imagePath) {
-  // Delete both image and its parameter file
+async function deleteImage(imagePath, userId) {
+  // Construct the full S3 key with userId/subfolder/filename
+  const fullPath = `${userId}/${imagePath}`;
+  console.log('Attempting to delete S3 object:', fullPath);
+
   const imageParams = {
     Bucket: process.env.AWS_S3_BUCKET,
-    Key: imagePath
+    Key: fullPath
   };
 
   const txtParams = {
     Bucket: process.env.AWS_S3_BUCKET,
-    Key: imagePath.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '.txt')
+    Key: fullPath.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '.txt')
   };
 
-  // Delete both files in parallel
-  await Promise.all([
-    s3.deleteObject(imageParams),
-    s3.deleteObject(txtParams)
-  ]);
+  try {
+    await Promise.all([
+      s3.deleteObject(imageParams),
+      s3.deleteObject(txtParams)
+    ]);
+    console.log('Successfully deleted:', fullPath);
+  } catch (error) {
+    console.error('Error deleting from S3:', error);
+    throw error;
+  }
 }
 
 export { serveImages, deleteImage };
