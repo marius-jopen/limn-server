@@ -1,10 +1,8 @@
+import './utils/loadEnv.js';  // This must be the first import!
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import dotenv from 'dotenv';
 import generateRoutes from './routes/generateRoutes.js';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;

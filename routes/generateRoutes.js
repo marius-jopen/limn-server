@@ -5,6 +5,7 @@ import generateImage1111RunpodPod from '../components/generate-image-1111-runpod
 import generateDeforum1111RunpodPod from '../components/generate-deforum-1111-runpod-pod.js'; // Import the new function
 import { getAllFiles } from '../components/get-all-files.js';  // Add .js extension
 import { serveImages, deleteImage } from '../components/serveImages.js';
+import { supabase } from '../utils/supabaseClient.js';  // Add this import at the top
 
 import path from 'path';  // Add this import at the top with other imports
 
@@ -109,6 +110,29 @@ router.delete('/output/*', async (req, res) => {
   } catch (error) {
     console.error('Error deleting image:', error);
     res.status(404).json({ message: 'Error deleting image', error: error.message });
+  }
+});
+
+// Add this new test route
+router.get('/test-supabase', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('image_generations')
+      .select('*')
+      .limit(1);
+    
+    if (error) throw error;
+    
+    res.json({ 
+      message: 'Supabase connection successful', 
+      data 
+    });
+  } catch (error) {
+    console.error('Supabase test error:', error);
+    res.status(500).json({ 
+      message: 'Supabase connection failed', 
+      error: error.message 
+    });
   }
 });
 
