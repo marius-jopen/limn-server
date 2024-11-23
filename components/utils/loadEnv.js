@@ -18,15 +18,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const envPath = path.join(__dirname, '..', '..', '.env');
 
-// Load environment variables
-const result = dotenv.config({ path: envPath });
-
-if (result.error) {
-    console.error('Error loading .env file:', result.error);
-    throw result.error;
-}
-
-console.log('Environment loaded:', {
-    supabaseUrl: process.env.PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
-    serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'Missing'
-}); 
+// Load environment variables with error handling
+try {
+    const result = dotenv.config({ path: envPath });
+    
+    if (result.error) {
+        throw result.error;
+    }
+    
+    console.log('Environment loaded:', {
+        supabaseUrl: process.env.PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
+        serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'Missing'
+    });
+} catch (error) {
+    if (error.code === 'ENOENT') {
+        console.warn(`Warning: .env file not found at ${envPath}\nPlease create a .env file with required environment variables.`);
+    } else {
+        console.error('Error loading .env file:', error);
+        throw error;
+    }
+} 
