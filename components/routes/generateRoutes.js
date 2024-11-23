@@ -2,10 +2,12 @@ import express from 'express';
 import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
 import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
 import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
-import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js'; // Import the new function
-import { getAllFiles } from '../api/s3/get-all-files.js';  // Add .js extension
+import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
+import { getAllFiles } from '../api/s3/get-all-files.js';
 import { serveImages } from '../api/s3/serveImages.js';
 import { deleteImage } from '../api/s3/deleteImage.js';
+import { getImageParameters } from '../api/parameters/parameterHandler.js';
+import { deleteImageRecord } from '../api/supabase/deleteImageRecord.js';
 
 const router = express.Router();
 
@@ -101,13 +103,36 @@ router.delete('/output/*', async (req, res) => {
     }
 
     console.log('Delete request received:', { userId, imagePath });
+    
+    // Delete from S3
     await deleteImage(imagePath, userId);
     
-    res.status(200).json({ message: 'Image deleted successfully' });
+    // Delete from Supabase
+    const imageName = imagePath.split('/').pop();
+    await deleteImageRecord(imageName, userId);
+    
+    res.status(200).json({ message: 'Image deleted successfully from S3 and database' });
   } catch (error) {
-    console.error('Error deleting image:', error);
-    res.status(404).json({ message: 'Error deleting image', error: error.message });
+    console.error('Error during deletion:', error);
+    res.status(404).json({ 
+      message: 'Error during deletion process', 
+      error: error.message 
+    });
   }
+});
+
+// NEW: POST endpoint for fetching image parameters
+router.post('/api/parameters', async (req, res) => {
+    try {
+        const { imageName, userId } = req.body;
+        const parameters = await getImageParameters(imageName, userId);
+        res.json(parameters);
+    } catch (error) {
+        console.error('Error fetching parameters:', error);
+        res.status(error.message.includes('required') ? 400 : 500).json({ 
+            error: error.message 
+        });
+    }
 });
 
 export default router;

@@ -15,11 +15,15 @@
 import { supabase } from '../../utils/supabaseClient.js';
 
 export async function Image1111saveData(data) {
+    // Extract the image name from the full URL
+    const imageName = data.imageUrl.split('/').pop();
+
     const { error } = await supabase
         .from('Image1111')
         .insert([{
             user_id: data.userId,
             image_url: data.imageUrl,
+            image_name: imageName,
             subfolder: data.subfolder,
             parameters: data.parameters,
             timestamp: new Date(data.timestamp).toISOString()
