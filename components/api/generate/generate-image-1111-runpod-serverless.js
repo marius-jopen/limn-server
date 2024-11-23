@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import config from '../../../config.js';
 import { saveImageData } from '../s3/saveImageData.js';
-import { saveImageConfig } from '../s3/saveImageConfig.js';
 import { Image1111saveData } from '../supabase/Image1111saveData.js';
 
 async function generateImage1111RunPodServerless(request) {
@@ -33,14 +32,6 @@ async function generateImage1111RunPodServerless(request) {
         // Save image data to S3
         const imageUrl = await saveImageData(
             jsonResponse, 
-            subfolder, 
-            timestamp, 
-            request.userId
-        );
-        
-        // Save image config to S3
-        await saveImageConfig(
-            parameters, 
             subfolder, 
             timestamp, 
             request.userId

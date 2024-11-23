@@ -3,11 +3,10 @@ import generateImage1111Local from '../api/generate/generate-image-1111-local.js
 import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
 import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
 import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
-import { getAllFiles } from '../api/s3/get-all-files.js';
-import { serveImages } from '../api/s3/serveImages.js';
 import { deleteImage } from '../api/s3/deleteImage.js';
-import { getImageParameters } from '../api/parameters/parameterHandler.js';
+import { getImageParameters } from '../api/supabase/parameterHandler.js';
 import { deleteImageRecord } from '../api/supabase/deleteImageRecord.js';
+import { getImages } from '../api/supabase/getImages.js';
 
 const router = express.Router();
 
@@ -61,13 +60,28 @@ router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
 // GET endpoint for fetching all images for a user
 router.get('/output', async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { 
+      userId, 
+      subfolder, 
+      limit, 
+      offset, 
+      orderBy, 
+      ascending 
+    } = req.query;
     
     if (!userId) {
       return res.status(400).json({ message: 'userId is required' });
     }
     
-    const images = await getAllFiles(userId);
+    const images = await getImages({ 
+      userId, 
+      subfolder, 
+      limit: limit ? parseInt(limit) : null,
+      offset: offset ? parseInt(offset) : null,
+      orderBy,
+      ascending: ascending === 'true'
+    });
+
     res.json({ images });
   } catch (error) {
     console.error('Error in /output route:', error);
@@ -78,38 +92,29 @@ router.get('/output', async (req, res) => {
   }
 });
 
-// GET endpoint for serving images
-router.get('/output/*', async (req, res) => {
-  try {
-    const { userId } = req.query;
-    const imagePath = req.params[0];
-    const response = await serveImages(imagePath, userId);
-    res.setHeader('Content-Type', response.ContentType || 'image/jpeg');
-    response.Body.pipe(res);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(404).send('Image not found');
-  }
-});
-
 // DELETE endpoint for deleting images
 router.delete('/output/*', async (req, res) => {
   try {
     const { userId } = req.query;
-    const imagePath = req.params[0];
+    const fullUrl = req.params[0];
     
     if (!userId) {
       return res.status(400).json({ message: 'userId is required' });
     }
 
-    console.log('Delete request received:', { userId, imagePath });
+    // Extract the subfolder and filename from the S3 URL
+    const urlParts = fullUrl.split('/');
+    const filename = urlParts.pop(); // Get the filename
+    const subfolder = urlParts[urlParts.length - 1]; // Get the subfolder
+    const s3Path = `${subfolder}/${filename}`; // Combine them
+
+    console.log('Delete request received:', { userId, s3Path });
     
-    // Delete from S3
-    await deleteImage(imagePath, userId);
+    // Delete from S3 with the correct path
+    await deleteImage(s3Path, userId);
     
     // Delete from Supabase
-    const imageName = imagePath.split('/').pop();
-    await deleteImageRecord(imageName, userId);
+    await deleteImageRecord(filename, userId);
     
     res.status(200).json({ message: 'Image deleted successfully from S3 and database' });
   } catch (error) {

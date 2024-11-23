@@ -14,9 +14,10 @@ const s3 = new S3({
 });
 
 async function deleteImage(imagePath, userId) {
-  // Construct the full S3 key with userId/subfolder/filename
-  const fullPath = `${userId}/${imagePath}`;
-  console.log('Attempting to delete S3 object:', fullPath);
+  // Ensure we're using the correct folder structure
+  const fullPath = `${userId}/image-1111-runpod-serverless/${imagePath.split('/').pop()}`;
+  
+  console.log('Full S3 path for deletion:', fullPath);
 
   const imageParams = {
     Bucket: process.env.AWS_S3_BUCKET,
@@ -29,13 +30,23 @@ async function deleteImage(imagePath, userId) {
   };
 
   try {
-    await Promise.all([
-      s3.deleteObject(imageParams),
-      s3.deleteObject(txtParams)
-    ]);
-    console.log('Successfully deleted:', fullPath);
+    // Add a check to verify the object exists before deletion
+    console.log('Attempting to delete:', imageParams);
+    const imageDeleteResponse = await s3.deleteObject(imageParams);
+    console.log('Image delete response:', imageDeleteResponse);
+
+    console.log('Attempting to delete txt:', txtParams);
+    const txtDeleteResponse = await s3.deleteObject(txtParams);
+    console.log('Text file delete response:', txtDeleteResponse);
+
+    return { imageDeleteResponse, txtDeleteResponse };
   } catch (error) {
-    console.error('Error deleting from S3:', error);
+    console.error('Error deleting from S3:', {
+      error: error.message,
+      code: error.code,
+      bucket: process.env.AWS_S3_BUCKET,
+      path: fullPath
+    });
     throw error;
   }
 }

@@ -1,3 +1,12 @@
+/**
+ * This module handles the retrieval of image generation parameters from the database.
+ * It provides functionality to fetch parameters associated with specific images for authenticated users.
+ * 
+ * The parameters are stored in the 'Image1111' table in Supabase, where each record
+ * contains the generation parameters used to create a specific image, linked to both
+ * the image name and the user who created it.
+ */
+
 import { supabase } from '../../utils/supabaseClient.js';
 
 export async function getImageParameters(imageName, userId) {
