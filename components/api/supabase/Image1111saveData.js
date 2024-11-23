@@ -14,16 +14,15 @@
 
 import { supabase } from '../../utils/supabaseClient.js';
 
-export async function saveGenerationMetadata(data) {
+export async function Image1111saveData(data) {
     const { error } = await supabase
-        .from('image_generations')
+        .from('Image1111')
         .insert([{
             user_id: data.userId,
-            prompt: data.prompt,
             image_url: data.imageUrl,
             subfolder: data.subfolder,
             parameters: data.parameters,
-            timestamp: new Date().toISOString()
+            timestamp: new Date(data.timestamp).toISOString()
         }]);
 
     if (error) {
