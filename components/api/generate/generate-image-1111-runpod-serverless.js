@@ -1,14 +1,11 @@
 import fetch from 'node-fetch';
-import config from '../config.js';
-import { saveImageData } from './saveImageData.js';
-import { saveImageConfig } from './saveImageConfig.js';
-import { saveGenerationMetadata } from './saveGenerationMetadata.js';
+import config from '../../../config.js';
+import { saveImageData } from '../s3/saveImageData.js';
+import { saveImageConfig } from '../s3/saveImageConfig.js';
+import { saveGenerationMetadata } from '../supabase/saveGenerationMetadata.js';
 
 async function generateImage1111RunPodServerless(request) {
     const subfolder = 'image-1111-runpod-serverless';
-
-    console.log('Received request with userId:', request.userId);
-    // console.log('Full request object:', request);
 
     const parameters = {
         input: {
@@ -32,8 +29,22 @@ async function generateImage1111RunPodServerless(request) {
 
         const jsonResponse = await response.json();
         const timestamp = Date.now();
-        const imageUrl = await saveImageData(jsonResponse, subfolder, timestamp, request.userId);
-        await saveImageConfig(parameters, subfolder, timestamp, request.userId);
+
+        // Save image data to S3
+        const imageUrl = await saveImageData(
+            jsonResponse, 
+            subfolder, 
+            timestamp, 
+            request.userId
+        );
+        
+        // Save image config to S3
+        await saveImageConfig(
+            parameters, 
+            subfolder, 
+            timestamp, 
+            request.userId
+        );
 
         // Save metadata to Supabase
         await saveGenerationMetadata({

@@ -1,3 +1,13 @@
+/**
+ * This module handles saving image data to AWS S3 storage.
+ * It takes base64-encoded image data from an API response, converts it to a buffer,
+ * and uploads it to S3 with a structured path (userId/subfolder/imageName).
+ * The function returns the public URL of the uploaded image.
+ * 
+ * @requires @aws-sdk/client-s3
+ * @requires @aws-sdk/lib-storage
+ */
+
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 

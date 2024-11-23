@@ -1,8 +1,8 @@
-import './utils/loadEnv.js';  // This must be the first import!
+import './components/utils/loadEnv.js';  // This must be the first import!
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import generateRoutes from './routes/generateRoutes.js';
+import generateRoutes from './components/routes/generateRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;

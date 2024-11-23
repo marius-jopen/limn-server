@@ -1,3 +1,12 @@
+/**
+ * Saves image generation parameters to AWS S3 as a JSON file.
+ * This utility function handles:
+ * - Parameter structure transformation for consistency
+ * - S3 upload of configuration data
+ * - File naming using timestamp and user-specific paths
+ * - Returns the public S3 URL of the saved configuration
+ */
+
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 

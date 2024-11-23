@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import config from '../config.js';
-import { saveImageData } from './saveImageData.js';
+import config from '../../../config.js';
+import { saveImageData } from '../s3/saveImageData.js';
 
 async function generateImage1111Local(request) {
     const subfolder = 'image-1111-local';

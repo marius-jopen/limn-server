@@ -1,3 +1,16 @@
+/**
+ * This module provides functionality to retrieve all image files from an AWS S3 bucket for a specific user.
+ * 
+ * Features:
+ * - Recursively fetches all files from a user's directory in S3
+ * - Handles pagination of S3 results automatically
+ * - Filters for image files only (jpg, jpeg, png, gif)
+ * - Uses the user's ID as a prefix to scope the search to their directory
+ * 
+ * @param {string} userId - The ID of the user whose files should be retrieved
+ * @returns {Promise<string[]>} - Array of S3 key paths for the user's image files
+ */
+
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
 export async function getAllFiles(userId) {

@@ -1,13 +1,11 @@
 import express from 'express';
-import generateImage1111Local from '../components/generate-image-1111-local.js';
-import generateImage1111RunPodServerless from '../components/generate-image-1111-runpod-serverless.js';
-import generateImage1111RunpodPod from '../components/generate-image-1111-runpod-pod.js';
-import generateDeforum1111RunpodPod from '../components/generate-deforum-1111-runpod-pod.js'; // Import the new function
-import { getAllFiles } from '../components/get-all-files.js';  // Add .js extension
-import { serveImages, deleteImage } from '../components/serveImages.js';
-import { supabase } from '../utils/supabaseClient.js';  // Add this import at the top
-
-import path from 'path';  // Add this import at the top with other imports
+import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
+import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
+import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
+import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js'; // Import the new function
+import { getAllFiles } from '../api/s3/get-all-files.js';  // Add .js extension
+import { serveImages } from '../api/s3/serveImages.js';
+import { deleteImage } from '../api/s3/deleteImage.js';
 
 const router = express.Router();
 
@@ -58,6 +56,7 @@ router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
   }
 });
 
+// GET endpoint for fetching all images for a user
 router.get('/output', async (req, res) => {
   try {
     const { userId } = req.query;
@@ -77,6 +76,7 @@ router.get('/output', async (req, res) => {
   }
 });
 
+// GET endpoint for serving images
 router.get('/output/*', async (req, res) => {
   try {
     const { userId } = req.query;
@@ -90,10 +90,7 @@ router.get('/output/*', async (req, res) => {
   }
 });
 
-router.get('/test', (req, res) => {
-  res.json({ message: 'Test endpoint working!' });
-});
-
+// DELETE endpoint for deleting images
 router.delete('/output/*', async (req, res) => {
   try {
     const { userId } = req.query;
@@ -110,29 +107,6 @@ router.delete('/output/*', async (req, res) => {
   } catch (error) {
     console.error('Error deleting image:', error);
     res.status(404).json({ message: 'Error deleting image', error: error.message });
-  }
-});
-
-// Add this new test route
-router.get('/test-supabase', async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from('image_generations')
-      .select('*')
-      .limit(1);
-    
-    if (error) throw error;
-    
-    res.json({ 
-      message: 'Supabase connection successful', 
-      data 
-    });
-  } catch (error) {
-    console.error('Supabase test error:', error);
-    res.status(500).json({ 
-      message: 'Supabase connection failed', 
-      error: error.message 
-    });
   }
 });
 
