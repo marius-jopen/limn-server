@@ -1,6 +1,7 @@
 import express from 'express';
 import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
 import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
+import generateImageComfyRunPodServerless from '../api/generate/generate-image-comfy-runpod-serverless.js';
 import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
 import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
 import { deleteImage } from '../api/s3/deleteImage.js';
@@ -30,6 +31,19 @@ router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
     res.json({ imageUrl, info });
   } catch (error) {
     console.error('Error in /generate-image-1111-runpod-serverless:', error);
+    res.status(500).json({ message: 'Error generating or saving the image.' });
+  }
+});
+
+// POST endpoint for generating images on RunPod serverless
+router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
+  try {
+    console.log('generateImageComfyRunPodServerless');
+    const imageRequest = req.body;
+    const { imageUrl, info } = await generateImageComfyRunPodServerless(imageRequest);
+    res.json({ imageUrl, info });
+  } catch (error) {
+    console.error('Error in /generate-image-comfy-runpod-serverless:', error);
     res.status(500).json({ message: 'Error generating or saving the image.' });
   }
 });
