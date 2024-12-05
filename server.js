@@ -2,7 +2,7 @@ import './components/utils/loadEnv.js';  // This must be the first import!
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import generateRoutes from './components/routes/generateRoutes.js';
+import EndpointsAll from './components/endpoints/endpoints-all.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // Mount all routes under /api
-app.use('/api', generateRoutes);
+app.use('/api', EndpointsAll);
 app.use('/api/output', express.static(path.join(process.env.OUTPUT_DIR)));
 
 app.listen(port, () => {

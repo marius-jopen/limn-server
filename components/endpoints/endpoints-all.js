@@ -1,6 +1,6 @@
 import express from 'express';
 // import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
-import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
+// import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
 import generateImageComfyRunPodServerless from '../api/generate/generate-image-comfy-runpod-serverless.js';
 // import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
 // import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
@@ -8,12 +8,30 @@ import { deleteImage } from '../api/s3/deleteImage.js';
 import { getImageParameters } from '../api/supabase/parameterHandler.js';
 import { deleteImageRecord } from '../api/supabase/deleteImageRecord.js';
 import { getImages } from '../api/supabase/getImages.js';
-import Comfy from './comfy.js';
-import DeforumImage from './deforum-image.js';
-import DeforumVideo from './deforum-video.js';
+// import Comfy from './comfy.js';
+import GenerateImage1111RunpodServerless from '../routes/generate-image-1111-runpod-serverless.js';
+// import DeforumVideo from './deforum-video.js';
+
+
+import generateImage1111RunpodServerlessRoute from './generate-image-1111-runpod-serverless/endpoint.js';
+import generateImageComfyRunPodServerlessRoute from './generate-image-comfy-runpod-serverless/endpoint.js';
+import generateVideo1111RunpodServerlessRoute from './generate-video-1111-runpod-serverless/endpoint.js';
 
 const router = express.Router();
 
+// Endpoint to receive a test request
+router.post('/test', async (req, res) => {
+  try {
+    console.log('Test endpoint hit:', req.body);
+    res.json({ 
+      message: 'Test endpoint successful',
+      receivedData: req.body
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });   
+  }
+});
 
 // Endpoint to receive the comfyUI workflow
 router.post('/comfy', async (req, res) => {
@@ -51,21 +69,38 @@ router.post('/deforum-video', async (req, res) => {
   }
 });
 
-// Endpoint to receive the deforum image request
-router.post('/deforum-image', async (req, res) => {
-  try {
-    // Here we use the same endpoint which we use for Deforum
-    // But we generate only one image
-    // Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
-    // We need this because like this we can preview images which we will later generate as video
 
-    //You can use the function DeforumImage to store all the functionalities if you like (import DeforumImage from './deforum-image.js';)
-    console.log(req);
-    res.json(res);
-  } catch (error) {
-    console.error(error);
-  }
-});
+// Endpoint to receive the deforum image request
+
+// Here we use the same endpoint which we use for Deforum
+// But we generate only one image
+// Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
+// We need this because like this we can preview images which we will later generate as video
+
+//You can use the function DeforumImage to store all the functionalities if you like (import DeforumImage from './deforum-image.js';)
+
+// router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
+//   try {
+//     console.log('Endpoint: generate-image-1111-runpod-serverless');
+
+//     const response = await GenerateImage1111RunpodServerless(req.body);
+    
+//     res.json({ 
+//       receivedData: response,
+//     });
+//   } catch (error) {
+//     console.error(error);
+
+//     res.status(500).json({ 
+//       error: 'Internal server error'
+//     });   
+//   }
+// });
+
+router.use(generateImage1111RunpodServerlessRoute);
+router.use(generateImageComfyRunPodServerlessRoute);
+router.use(generateVideo1111RunpodServerlessRoute);
+
 
 
 
@@ -83,29 +118,29 @@ router.post('/deforum-image', async (req, res) => {
 // });
 
 // POST endpoint for generating images on RunPod serverless
-router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
-  try {
-    const imageRequest = req.body;
-    const { imageUrl, info } = await generateImage1111RunPodServerless(imageRequest);
-    res.json({ imageUrl, info });
-  } catch (error) {
-    console.error('Error in /generate-image-1111-runpod-serverless:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
-  }
-});
+// router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
+//   try {
+//     const imageRequest = req.body;
+//     const { imageUrl, info } = await generateImage1111RunPodServerless(imageRequest);
+//     res.json({ imageUrl, info });
+//   } catch (error) {
+//     console.error('Error in /generate-image-1111-runpod-serverless:', error);
+//     res.status(500).json({ message: 'Error generating or saving the image.' });
+//   }
+// });
 
 // POST endpoint for generating images on RunPod serverless
-router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
-  try {
-    console.log('generateImageComfyRunPodServerless');
-    const imageRequest = req.body;
-    const { imageUrl, info } = await generateImageComfyRunPodServerless(imageRequest);
-    res.json({ imageUrl, info });
-  } catch (error) {
-    console.error('Error in /generate-image-comfy-runpod-serverless:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
-  }
-});
+// router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
+//   try {
+//     console.log('generateImageComfyRunPodServerless');
+//     const imageRequest = req.body;
+//     const { imageUrl, info } = await generateImageComfyRunPodServerless(imageRequest);
+//     res.json({ imageUrl, info });
+//   } catch (error) {
+//     console.error('Error in /generate-image-comfy-runpod-serverless:', error);
+//     res.status(500).json({ message: 'Error generating or saving the image.' });
+//   }
+// });
 
 // POST endpoint for generating images on RunPod real pod
 // router.post('/generate-image-1111-runpod-pod', async (req, res) => {
@@ -131,15 +166,15 @@ router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
 // });
 
 // POST endpoint for generating images using Deforum on RunPod real pod
-router.post('/generate-deforum-1111-runpod-serverless', async (req, res) => {
-  try {
-    const result = await generateDeforum1111RunpodServerless(req.body);
-    res.json(result);
-  } catch (error) {
-    console.error('Error in /generate-deforum-1111-runpod-serverless:', error);
-    res.status(500).json({ message: error.message });
-  }
-});
+// router.post('/generate-deforum-1111-runpod-serverless', async (req, res) => {
+//   try {
+//     const result = await generateDeforum1111RunpodServerless(req.body);
+//     res.json(result);
+//   } catch (error) {
+//     console.error('Error in /generate-deforum-1111-runpod-serverless:', error);
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // GET endpoint for fetching all images for a user
 router.get('/output', async (req, res) => {

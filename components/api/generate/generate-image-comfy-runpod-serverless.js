@@ -3,21 +3,14 @@ import config from '../../../config.js';
 import { saveImageDataComfy } from '../s3/saveImageDataComfy.js';
 import { ImageComfysaveData } from '../supabase/ImageComfysaveData.js';
 
-/**
- * Generates an image using the ComfyUI RunPod Serverless API.
- * Handles the API request, saves the generated image to S3, and stores metadata in Supabase.
- * 
- * @param {Object} request - The request object containing workflow parameters
- * @returns {Object} Object containing the image URL and success message
- * @throws {Error} If the API request fails or image processing encounters an error
- */
-async function generateImageComfyRunPodServerless(request) {
+
+async function generateImageComfyRunPodServerless(requestData) {
     const subfolder = 'image-comfy-runpod-serverless';
 
     const parameters = {
         input: {
             workflow: {
-                ...request
+                ...requestData
             }
         }
     };
@@ -64,12 +57,12 @@ async function generateImageComfyRunPodServerless(request) {
             jsonResponse,
             subfolder, 
             timestamp, 
-            request.userId
+            requestData.userId
         );
 
         // Save metadata to Supabase
         await ImageComfysaveData({
-            userId: request.userId,
+            userId: requestData.userId,
             imageUrl: imageUrl,
             subfolder: subfolder,
             parameters: parameters,
@@ -81,7 +74,7 @@ async function generateImageComfyRunPodServerless(request) {
             info: "Image generated and saved successfully!" 
         };
     } catch (error) {
-        console.error('Error in generateImageComfyRunPod:', error);
+        console.error('Error in generateImageComfyRunPodServerless:', error);
         throw error;
     }
 }
