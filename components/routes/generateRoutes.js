@@ -11,6 +11,54 @@ import { getImages } from '../api/supabase/getImages.js';
 
 const router = express.Router();
 
+
+// Endpoint to receive the comfyUI workflow
+router.post('/comfy', async (req, res) => {
+  try {
+    // When the comfyUI workflow is received, send it to the comfyUI serverless endpoint
+    // Lets use the enpoint with the /run and the /health etc. endpoints
+    // Then return the response as image.
+    console.log(req);
+    res.json(res);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Endpoint to receive the deforum video request
+router.post('/deforum-video', async (req, res) => {
+  try {
+    // When the deforum video request is received, send it to the deforum serverless endpoint
+    // Lets use the enpoint with the /run and the /health etc. endpoints
+    // Then it should return every image in the video as a response after each other
+    // No need that it saves the images on the RunPod volume
+    // And also no need to save or return the video. We only want the images
+    // After no image comes in anymore, we can send a request, that the worker can stop 
+    // Also we need the option to stop the worker before it is finished. 
+    // Like this we can stop a generation when we see that we dont't like the result.
+    console.log(req);
+    res.json(res);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Endpoint to receive the deforum image request
+router.post('/deforum-image', async (req, res) => {
+  try {
+    // Here we use the same endpoint which we use for Deforum
+    // But we generate only one image
+    // We need this because like this we can preview images which we will later generate as video
+    console.log(req);
+    res.json(res);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+
+
+
 // POST endpoint for generating images locally
 // router.post('/generate-image-1111-local', async (req, res) => {
 //   try {
