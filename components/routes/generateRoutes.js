@@ -22,7 +22,7 @@ router.post('/comfy', async (req, res) => {
     // Lets use the enpoint with the /run and the /health etc. endpoints
     // Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
 
-    //You can use the function Comfy to store all the functionalities if you like
+    //You can use the function Comfy to store all the functionalities if you like (import Comfy from './comfy.js';)
     console.log(req);
     res.json(res);
   } catch (error) {
@@ -43,7 +43,7 @@ router.post('/deforum-video', async (req, res) => {
     // Also we need the option to stop the worker before it is finished. 
     // Like this we can stop a generation when we see that we dont't like the result.
 
-    //You can use the function DeforumVideo to store all the functionalities if you like
+    //You can use the function DeforumVideo to store all the functionalities if you like (import DeforumImage from './deforum-image.js';)
     console.log(req);
     res.json(res);
   } catch (error) {
@@ -59,7 +59,7 @@ router.post('/deforum-image', async (req, res) => {
     // Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
     // We need this because like this we can preview images which we will later generate as video
 
-    //You can use the function DeforumImage to store all the functionalities if you like
+    //You can use the function DeforumImage to store all the functionalities if you like (import DeforumImage from './deforum-image.js';)
     console.log(req);
     res.json(res);
   } catch (error) {
