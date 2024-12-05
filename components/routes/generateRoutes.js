@@ -8,6 +8,9 @@ import { deleteImage } from '../api/s3/deleteImage.js';
 import { getImageParameters } from '../api/supabase/parameterHandler.js';
 import { deleteImageRecord } from '../api/supabase/deleteImageRecord.js';
 import { getImages } from '../api/supabase/getImages.js';
+import Comfy from './comfy.js';
+import DeforumImage from './deforum-image.js';
+import DeforumVideo from './deforum-video.js';
 
 const router = express.Router();
 
@@ -18,6 +21,8 @@ router.post('/comfy', async (req, res) => {
     // When the comfyUI workflow is received, send it to the comfyUI serverless endpoint
     // Lets use the enpoint with the /run and the /health etc. endpoints
     // Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
+
+    //You can use the function Comfy to store all the functionalities if you like
     console.log(req);
     res.json(res);
   } catch (error) {
@@ -37,6 +42,8 @@ router.post('/deforum-video', async (req, res) => {
     // After no image comes in anymore, we can send a request, that the worker can stop 
     // Also we need the option to stop the worker before it is finished. 
     // Like this we can stop a generation when we see that we dont't like the result.
+
+    //You can use the function DeforumVideo to store all the functionalities if you like
     console.log(req);
     res.json(res);
   } catch (error) {
@@ -51,6 +58,8 @@ router.post('/deforum-image', async (req, res) => {
     // But we generate only one image
     // Then return the response as image which we can look at by copying the decoded image url into an encoding tool.
     // We need this because like this we can preview images which we will later generate as video
+
+    //You can use the function DeforumImage to store all the functionalities if you like
     console.log(req);
     res.json(res);
   } catch (error) {
