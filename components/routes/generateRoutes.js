@@ -1,9 +1,9 @@
 import express from 'express';
-import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
+// import generateImage1111Local from '../api/generate/generate-image-1111-local.js';
 import generateImage1111RunPodServerless from '../api/generate/generate-image-1111-runpod-serverless.js';
 import generateImageComfyRunPodServerless from '../api/generate/generate-image-comfy-runpod-serverless.js';
-import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
-import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
+// import generateImage1111RunpodPod from '../api/generate/generate-image-1111-runpod-pod.js';
+// import generateDeforum1111RunpodPod from '../api/generate/generate-deforum-1111-runpod-pod.js';
 import { deleteImage } from '../api/s3/deleteImage.js';
 import { getImageParameters } from '../api/supabase/parameterHandler.js';
 import { deleteImageRecord } from '../api/supabase/deleteImageRecord.js';
@@ -12,16 +12,16 @@ import { getImages } from '../api/supabase/getImages.js';
 const router = express.Router();
 
 // POST endpoint for generating images locally
-router.post('/generate-image-1111-local', async (req, res) => {
-  try {
-    const imageRequest = req.body;
-    const { imageUrl, info } = await generateImage1111Local(imageRequest);
-    res.json({ imageUrl, info });
-  } catch (error) {
-    console.error('Error in /generate-image-1111-local:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
-  }
-});
+// router.post('/generate-image-1111-local', async (req, res) => {
+//   try {
+//     const imageRequest = req.body;
+//     const { imageUrl, info } = await generateImage1111Local(imageRequest);
+//     res.json({ imageUrl, info });
+//   } catch (error) {
+//     console.error('Error in /generate-image-1111-local:', error);
+//     res.status(500).json({ message: 'Error generating or saving the image.' });
+//   }
+// });
 
 // POST endpoint for generating images on RunPod serverless
 router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
@@ -49,27 +49,27 @@ router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
 });
 
 // POST endpoint for generating images on RunPod real pod
-router.post('/generate-image-1111-runpod-pod', async (req, res) => {
-  try {
-    const imageRequest = req.body;
-    const { imageUrl, info } = await generateImage1111RunpodPod(imageRequest);
-    res.json({ imageUrl, info });
-  } catch (error) {
-    console.error('Error in /generate-image-1111-runpod-pod:', error);
-    res.status(500).json({ message: 'Error generating or saving the image.' });
-  }
-});
+// router.post('/generate-image-1111-runpod-pod', async (req, res) => {
+//   try {
+//     const imageRequest = req.body;
+//     const { imageUrl, info } = await generateImage1111RunpodPod(imageRequest);
+//     res.json({ imageUrl, info });
+//   } catch (error) {
+//     console.error('Error in /generate-image-1111-runpod-pod:', error);
+//     res.status(500).json({ message: 'Error generating or saving the image.' });
+//   }
+// });
 
 // POST endpoint for generating images using Deforum on RunPod real pod
-router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
-  try {
-    const result = await generateDeforum1111RunpodPod(req.body);
-    res.json(result);
-  } catch (error) {
-    console.error('Error in /generate-deforum-1111-runpod-pod:', error);
-    res.status(500).json({ message: error.message });
-  }
-});
+// router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
+//   try {
+//     const result = await generateDeforum1111RunpodPod(req.body);
+//     res.json(result);
+//   } catch (error) {
+//     console.error('Error in /generate-deforum-1111-runpod-pod:', error);
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // POST endpoint for generating images using Deforum on RunPod real pod
 router.post('/generate-deforum-1111-runpod-serverless', async (req, res) => {
