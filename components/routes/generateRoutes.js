@@ -71,6 +71,17 @@ router.post('/generate-deforum-1111-runpod-pod', async (req, res) => {
   }
 });
 
+// POST endpoint for generating images using Deforum on RunPod real pod
+router.post('/generate-deforum-1111-runpod-serverless', async (req, res) => {
+  try {
+    const result = await generateDeforum1111RunpodServerless(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error in /generate-deforum-1111-runpod-serverless:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // GET endpoint for fetching all images for a user
 router.get('/output', async (req, res) => {
   try {
