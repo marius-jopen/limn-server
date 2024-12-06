@@ -1,8 +1,6 @@
 import fetch from 'node-fetch';
 
-async function ApiCall(request) {
-    console.log('ApiCall: GenerateVideo1111RunpodServerless');
-
+async function ApiCallRunsync(request) {
     const parameters = {
         input: {
             workflow: {
@@ -12,7 +10,7 @@ async function ApiCall(request) {
     };
 
     try {
-        const response = await fetch(`${process.env.RUNPOD_DEFORUM_SERVERLESS}/runsync`, {
+        const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/runsync`, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
@@ -26,18 +24,18 @@ async function ApiCall(request) {
         }
 
         const data = await response.json();
-
+  
         return {
-            info: "Images & Video generated successfully!",
+            info: "Image generated successfully!",
             request: request,
             data: data
         };
 
     } catch (error) {
-        console.error('Error in ApiCall: GenerateVideo1111RunpodServerless:', error);
-
+        console.error('Error in ApiCallRunsync:', error);
+        
         throw error;
     }
 }
 
-export default ApiCall;
+export default ApiCallRunsync;

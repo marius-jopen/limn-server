@@ -1,13 +1,11 @@
 import express from 'express';
-import ApiCall from './apicall.js';
+import ApiCallRunsync from './apicall-runsync.js';
 
 const router = express.Router();
 
-router.post('/generate-image-1111-runpod-serverless', async (req, res) => {
+router.post('/generate-video-1111-runpod-serverless-runsync', async (req, res) => {
   try {
-    console.log('Endpoint: generate-image-1111-runpod-serverless');
-
-    const { info, data, request } = await ApiCall(req.body);
+    const { info, data, request } = await ApiCallRunsync(req.body);
     
     res.json({ 
       info: info,

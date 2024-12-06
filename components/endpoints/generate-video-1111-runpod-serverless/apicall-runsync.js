@@ -1,8 +1,6 @@
 import fetch from 'node-fetch';
 
-async function ApiCall(request) {
-    console.log('ApiCall: GenerateImage1111RunpodServerless');
-
+async function ApiCallRunsync(request) {
     const parameters = {
         input: {
             workflow: {
@@ -28,16 +26,16 @@ async function ApiCall(request) {
         const data = await response.json();
 
         return {
-            info: "Image generated successfully!",
+            info: "Images & Video generated successfully!",
             request: request,
             data: data
         };
 
     } catch (error) {
-        console.error('Error in ApiCall: GenerateImage1111RunpodServerless:', error);
+        console.error('Error in ApiCallRunsync:', error);
 
         throw error;
     }
 }
 
-export default ApiCall;
+export default ApiCallRunsync;

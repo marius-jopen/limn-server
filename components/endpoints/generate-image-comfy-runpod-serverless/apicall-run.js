@@ -1,8 +1,6 @@
 import fetch from 'node-fetch';
 
-async function ApiCall(request) {
-    console.log('ApiCall: generate-image-comfy-runpod-serverless');
-
+async function ApiCallRun(request) {
     const parameters = {
         input: {
             workflow: {
@@ -12,7 +10,7 @@ async function ApiCall(request) {
     };
 
     try {
-        const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/runsync`, {
+        const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/run`, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
@@ -28,16 +26,16 @@ async function ApiCall(request) {
         const data = await response.json();
   
         return {
-            info: "Image generated successfully!",
+            info: "Job started successfully!",
             request: request,
             data: data
         };
 
     } catch (error) {
-        console.error('Error in ApiCall: generate-image-comfy-runpod-serverless:', error);
+        console.error('Error in ApiCallRun:', error);
         
         throw error;
     }
 }
 
-export default ApiCall;
+export default ApiCallRun;

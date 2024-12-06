@@ -1,13 +1,11 @@
 import express from 'express';
-import ApiCall from './apicall.js';
+import ApiCallRunSync from './apicall-runsync.js';
 
 const router = express.Router();
 
-router.post('/generate-image-comfy-runpod-serverless', async (req, res) => {
+router.post('/generate-image-1111-runpod-serverless-runsync', async (req, res) => {
   try {
-    console.log('Endpoint: generate-image-comfy-runpod-serverless');
-
-    const { info, data, request } = await ApiCall(req.body);
+    const { info, data, request } = await ApiCallRunSync(req.body);
     
     res.json({ 
       info: info,

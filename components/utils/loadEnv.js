@@ -26,10 +26,10 @@ try {
         throw result.error;
     }
     
-    console.log('Environment loaded:', {
-        supabaseUrl: process.env.PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
-        serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'Missing'
-    });
+    // console.log('Environment loaded:', {
+    //     supabaseUrl: process.env.PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
+    //     serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'Missing'
+    // });
 } catch (error) {
     if (error.code === 'ENOENT') {
         console.warn(`Warning: .env file not found at ${envPath}\nPlease create a .env file with required environment variables.`);
