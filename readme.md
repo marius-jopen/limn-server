@@ -19,6 +19,8 @@ We have three routes here:
 2. /generate-image-1111-runpod-serverless
 3. /generate-video-1111-runpod-serverless
 
+For each route we have an own folder which includes all the functionalities, API calls and other things which are needed. Like this we can keep the code clean and every route can work isolated from the other routes.
+
 I tried to keep the code as clean as possible.
 
 I am using Postman to make the API calls. I included an export of my Postman project into this repository. So you can import it and run the requests directly.
