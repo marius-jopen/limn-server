@@ -62,7 +62,7 @@ But there are some issues where I need some help to fix:
 
 2. I want to add the ability to send the generated image as a base64 string. 
 
-3. At the moment it sends all the images and the video AFTER everything was created. But it should send each image right after it was created.
+3. At the moment it sends all the images and the video AFTER EVERYTHING was created. But it should send each image right after it was created.
 
 4. We don't need the video. 
 
