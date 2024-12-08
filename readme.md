@@ -64,6 +64,6 @@ But there are some issues where I need some help to fix:
 
 3. At the moment it sends all the images and the video AFTER EVERYTHING was created. But it should send each image right after it was created.
 
-4. We don't need the video. 
+4. We don't need the video at all. Because we can get the images as a base64 string.
 
 5. It should not save any images or videos on the RunPod server.
