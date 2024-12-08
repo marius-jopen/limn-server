@@ -16,7 +16,8 @@ We have three routes here:
 
 I tried to keep the code as clean as possible.
 
-I am using Postman to make the API calls. 
+I am using Postman to make the API calls. I included an export of my Postman project into this repository. So you can import it and run the requests directly.
+
 
 I will set up the frontend later - once we have the API calls working.
 
