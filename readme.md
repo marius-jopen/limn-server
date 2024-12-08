@@ -58,7 +58,7 @@ The endpoint works and generates videos.
 
 But there are some issues where I need some help to fix:
 
-1. The endpoint is not working very stable. Many times the generation of the video fails.
+1. The endpoint is not working very stable. Many times the generation of the video and image sequence fails.
 
 2. I want to add the ability to send the generated image as a base64 string. 
 
