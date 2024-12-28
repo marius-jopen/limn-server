@@ -36,6 +36,8 @@ The only thing that is missing is the ability to poll the status of the job auto
 
 But I can do that myself.
 
+But lets fix the run endpoint.
+
 
 
 # 1111 IMAGE SERVERLESS
