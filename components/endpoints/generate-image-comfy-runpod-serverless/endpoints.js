@@ -30,6 +30,8 @@ router.post('/generate-image-comfy-runpod-serverless-run', async (req, res) => {
     const jobId = data.id;
     const result = await pollForResults(jobId);
     
+    delete data.status; // Stale status is not needed
+
     res.json({ 
       info: info,
       request: request,
