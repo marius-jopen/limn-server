@@ -4,7 +4,7 @@ async function pollForResults(jobId, maxAttempts = 360, interval = 1000) {
   console.log('Starting job:', jobId);
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/status/${jobId}`, {
+    const response = await fetch(`https://api.runpod.ai/v2/${process.env.dy5plt9k7ecj60}/status/${jobId}`, {
       headers: {
         'Authorization': `Bearer ${process.env.RUNPOD_API_KEY}`
       }

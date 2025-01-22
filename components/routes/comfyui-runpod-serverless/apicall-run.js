@@ -5,12 +5,15 @@ async function ApiCallRun(request) {
         input: {
             workflow: {
                 ...request
+            },
+            metadata: {
+                user: "marius"
             }
         }
     };
 
     try {
-        const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/run`, {
+        const response = await fetch(`https://api.runpod.ai/v2/${process.env.COMFY_SLS_ENDPOINT_ID}/run`, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
