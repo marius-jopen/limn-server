@@ -1,8 +1,11 @@
+// This is a health check for the ComfyUI RunPod Serverless endpoint
+// It's working as expected
+
 import fetch from 'node-fetch';
 
 async function ApiCallHealth() {
     try {
-        const response = await fetch(`${process.env.RUNPOD_COMFY_SERVERLESS}/health`, {
+        const response = await fetch(`https://api.runpod.ai/v2/${process.env.COMFY_SLS_ENDPOINT_ID}/health`, {
             method: "GET",
             headers: { 
                 'Authorization': `Bearer ${process.env.RUNPOD_API_KEY}`

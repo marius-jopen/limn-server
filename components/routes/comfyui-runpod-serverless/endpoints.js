@@ -6,7 +6,7 @@ import pollForResults from './poll-results.js';
 
 const router = express.Router();
 
-router.post('/generate-image-comfy-runpod-serverless-runsync', async (req, res) => {
+router.post('/comfyui-runpod-serverless-runsync', async (req, res) => {
   try {
     const { info, data, request } = await ApiCallRunsync(req.body);
     
@@ -24,7 +24,7 @@ router.post('/generate-image-comfy-runpod-serverless-runsync', async (req, res) 
   }
 });
 
-router.post('/generate-image-comfy-runpod-serverless-run', async (req, res) => {
+router.post('/comfyui-runpod-serverless-run', async (req, res) => {
   try {
     const { info, data, request } = await ApiCallRun(req.body);    
     const jobId = data.id;
@@ -46,7 +46,7 @@ router.post('/generate-image-comfy-runpod-serverless-run', async (req, res) => {
   }
 });
 
-router.get('/generate-image-comfy-runpod-serverless-health', async (req, res) => {
+router.get('/comfyui-runpod-serverless-health', async (req, res) => {
   try {
     const healthStatus = await ApiCallHealth();
     
