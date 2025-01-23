@@ -1,16 +1,18 @@
 import fetch from 'node-fetch';
 
 async function ApiCallRun(request) {
+    console.log('Starting API call with request:', JSON.stringify(request, null, 2));
+    
     const parameters = {
         input: {
-            workflow: {
-                ...request
-            },
+            workflow: request.input.workflow,
             metadata: {
-                user: "marius"
+                user: request.input.user || 'default_user'
             }
         }
     };
+
+    console.log('Sending parameters to RunPod:', JSON.stringify(parameters, null, 2));
 
     try {
         const response = await fetch(`https://api.runpod.ai/v2/${process.env.COMFY_SLS_ENDPOINT_ID}/run`, {
@@ -23,10 +25,13 @@ async function ApiCallRun(request) {
         });
 
         if (!response.ok) {
-            throw new Error(`External API error: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('RunPod API error:', errorText);
+            throw new Error(`External API error: ${response.statusText}\n${errorText}`);
         }
 
         const data = await response.json();
+        console.log('RunPod API response:', JSON.stringify(data, null, 2));
   
         return {
             info: "Job started successfully!",
@@ -36,7 +41,6 @@ async function ApiCallRun(request) {
 
     } catch (error) {
         console.error('Error in ApiCallRun:', error);
-        
         throw error;
     }
 }

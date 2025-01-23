@@ -1,14 +1,14 @@
 import express from 'express';
-import ApiCallRunsync from './apicall-runsync.js';
 import ApiCallRun from './apicall-run.js';
+import ApiCallStatus from './apicall-status.js';
 import ApiCallHealth from './apicall-health.js';
-import pollForResults from './poll-results.js';
+import fetch from 'node-fetch';
 
 const router = express.Router();
 
-router.post('/comfyui-runpod-serverless-runsync', async (req, res) => {
+router.post('/comfyui-runpod-serverless-run', async (req, res) => {
   try {
-    const { info, data, request } = await ApiCallRunsync(req.body);
+    const { info, data, request } = await ApiCallRun(req.body);    
     
     res.json({ 
       info: info,
@@ -17,31 +17,22 @@ router.post('/comfyui-runpod-serverless-runsync', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
     res.status(500).json({ 
-      error: 'Internal server error'
+      error: 'Internal server error',
+      message: error.message
     });   
   }
 });
 
-router.post('/comfyui-runpod-serverless-run', async (req, res) => {
+router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
   try {
-    const { info, data, request } = await ApiCallRun(req.body);    
-    const jobId = data.id;
-    const result = await pollForResults(jobId);
-    
-    delete data.status; // Stale status is not needed
-
-    res.json({ 
-      info: info,
-      request: request,
-      data: data,
-      result: result  // This will contain the final image URLs
-    });
+    const status = await ApiCallStatus(req.params.jobId);
+    res.json(status);
   } catch (error) {
-    console.error(error);
+    console.error('Status check failed:', error);
     res.status(500).json({ 
-      error: 'Internal server error'
+      error: 'Status check failed',
+      message: error.message 
     });   
   }
 });
