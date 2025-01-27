@@ -6,19 +6,18 @@ import { saveToResource } from '../../supabase/save.js';
 
 const router = express.Router();
 
+const workflowStorage = new Map(); // Simple in-memory storage
+
 router.post('/comfyui-runpod-serverless-run', async (req, res) => {
   try {
     const { info, data, request } = await ApiCallRun(req.body);    
+    workflowStorage.set(data.id, req.body.input.workflow);
     
-    res.json({ 
-      info: info,
-      request: request,
-      data: data
-    });
+    res.json({ info, request, data });
   } catch (error) {
-    console.error(error);
+    console.error('Run endpoint error:', error);
     res.status(500).json({ 
-      error: 'Internal server error',
+      error: 'Failed to process workflow',
       message: error.message
     });   
   }
@@ -27,28 +26,39 @@ router.post('/comfyui-runpod-serverless-run', async (req, res) => {
 router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
   try {
     const status = await ApiCallStatus(req.params.jobId);
-    res.json(status);
     
-    // Only process completed jobs with image output
     if (status.status === 'COMPLETED' && status.output?.[0]?.images?.[0]) {
       const { name: imageName, url: imageUrl } = status.output[0].images[0];
-      
+      const workflow = workflowStorage.get(req.params.jobId);
       const userId = req.query.userId || req.headers['user-id'];
       const service = req.query.service || req.headers['service'];
-      const workflow = req.query.workflow || req.headers['workflow'];
+      const workflowName = req.query.workflow || req.headers['workflow'];
       
       if (!userId) {
-        console.error('No userId provided for saving image');
-        return;
+        console.warn('No userId provided for saving image');
+        return res.status(400).json({ error: 'Missing userId parameter' });
       }
 
       try {
-        const saveResult = await saveToResource(userId, imageUrl, imageName, service, workflow);
-        console.log('Image saved:', { imageName, imageUrl, service, workflow, saveResult });
+        await saveToResource(
+          userId, 
+          imageUrl, 
+          imageName, 
+          service, 
+          workflowName,
+          workflow
+        );
+        workflowStorage.delete(req.params.jobId);
       } catch (saveError) {
         console.error('Failed to save image:', saveError);
+        return res.status(500).json({ 
+          error: 'Failed to save image',
+          message: saveError.message 
+        });
       }
-    } 
+    }
+    
+    res.json(status);
   } catch (error) {
     console.error('Status check failed:', error);
     res.status(500).json({ 

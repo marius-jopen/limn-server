@@ -1,15 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY  // Make sure this is the service_role key
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY
 
-console.log('Initializing Supabase with URL:', supabaseUrl ? 'URL exists' : 'URL missing')  // Debug env vars
-console.log('API Key exists:', supabaseKey ? 'Yes' : 'No')  // Debug env vars
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing required Supabase configuration')
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-async function saveToResource(userId, imageUrl, imageName, service, workflow) {
-    console.log('Attempting to save with:', { userId, imageUrl, imageName, service, workflow });  // Debug log
+async function saveToResource(userId, imageUrl, imageName, service, workflowName, workflow) {
     try {
         const { data, error } = await supabase
             .from('resource')
@@ -17,20 +17,19 @@ async function saveToResource(userId, imageUrl, imageName, service, workflow) {
                 user_id: userId,
                 image_url: imageUrl,
                 image_name: imageName,
-                service: service,
-                workflow_name: workflow
+                service,
+                workflow_name: workflowName,
+                workflow_data: workflow
             }])
             .select()
 
         if (error) {
-            console.error('Supabase error:', error);  // Detailed error logging
-            throw error;
+            throw error
         }
-        console.log('Save successful, returned data:', data);  // Success log
+
         return data
     } catch (error) {
-        console.error('Error in saveToResource:', error.message, error);  // More detailed error logging
-        throw error
+        throw new Error(`Failed to save resource: ${error.message}`)
     }
 }
 
