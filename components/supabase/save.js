@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-async function saveToResource(userId, imageUrl, imageName, service, workflowName, workflow) {
+async function saveToResource(userId, imageUrl, imageName, service, workflowName, workflow, batchName = null) {
     try {
         const { data, error } = await supabase
             .from('resource')
@@ -19,7 +19,8 @@ async function saveToResource(userId, imageUrl, imageName, service, workflowName
                 image_name: imageName,
                 service,
                 workflow_name: workflowName,
-                workflow_data: workflow
+                workflow_data: workflow,
+                ...(batchName && { batch_name: batchName })
             }])
             .select()
 

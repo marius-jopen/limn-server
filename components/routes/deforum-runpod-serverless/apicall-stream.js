@@ -1,4 +1,6 @@
-async function ApiCallStream(jobId, res) {
+import { saveToResource } from '../../supabase/save.js';
+
+async function ApiCallStream(jobId, res, onCompleted = null) {
   // Set streaming headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -27,6 +29,10 @@ async function ApiCallStream(jobId, res) {
     // If we have a final status, end the stream
     if (statusData.status === 'COMPLETED' || statusData.status === 'FAILED' || statusData.status === 'CANCELLED') {
       isCompleted = true;
+      // Call the completion callback if provided
+      if (onCompleted && typeof onCompleted === 'function') {
+        await onCompleted(statusData);
+      }
       break;
     }
 
