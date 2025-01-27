@@ -26,13 +26,14 @@ async function ApiCallStream(jobId, res, onCompleted = null) {
     // Send the status update
     res.write(`data: ${JSON.stringify(statusData)}\n\n`);
 
+    // Call the callback with the status data for both IN_PROGRESS and COMPLETED states
+    if (onCompleted && typeof onCompleted === 'function') {
+      await onCompleted(statusData);
+    }
+
     // If we have a final status, end the stream
     if (statusData.status === 'COMPLETED' || statusData.status === 'FAILED' || statusData.status === 'CANCELLED') {
       isCompleted = true;
-      // Call the completion callback if provided
-      if (onCompleted && typeof onCompleted === 'function') {
-        await onCompleted(statusData);
-      }
       break;
     }
 
@@ -48,6 +49,13 @@ async function ApiCallStream(jobId, res, onCompleted = null) {
       if (streamResponse.ok) {
         const streamData = await streamResponse.json();
         if (streamData.stream) {
+          // Call the callback with the stream data
+          if (onCompleted && typeof onCompleted === 'function') {
+            await onCompleted({
+              status: 'IN_PROGRESS',
+              stream: streamData.stream
+            });
+          }
           res.write(`data: ${JSON.stringify(streamData)}\n\n`);
         }
       }

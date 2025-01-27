@@ -53,13 +53,41 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
     
     let savedImages = new Set(); // Track which images we've already saved
     
-    await ApiCallStream(jobId, res, async (status) => {
-      if (status.status === 'COMPLETED') {
-        const workflow = workflowStorage.get(jobId);
-        
-        // Handle final output images
-        if (status.output?.images?.length > 0) {
-          for (const image of status.output.images) {
+    await ApiCallStream(jobId, res, async (statusData) => {
+      const workflow = workflowStorage.get(jobId);
+
+      // Handle streamed images
+      if (statusData.status === 'IN_PROGRESS' && statusData.stream) {
+        for (const streamItem of statusData.stream) {
+          if (streamItem.output?.images) {
+            for (const image of streamItem.output.images) {
+              if (!savedImages.has(image.url)) {
+                try {
+                  await saveToResource(
+                    userId,
+                    image.url,
+                    image.name,
+                    service,
+                    workflowName,
+                    workflow,
+                    batchName
+                  );
+                  savedImages.add(image.url);
+                  console.log(`Saved streamed image to Supabase: ${image.url}, batch: ${batchName}`);
+                } catch (saveError) {
+                  console.error('Failed to save streamed image:', saveError);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Handle final output when job completes
+      if (statusData.status === 'COMPLETED') {
+        // Save any remaining images from final output
+        if (statusData.output?.images) {
+          for (const image of statusData.output.images) {
             if (!savedImages.has(image.url)) {
               try {
                 await saveToResource(
@@ -80,35 +108,8 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
           }
         }
         
-        // Handle streamed images from output array
-        if (Array.isArray(status.output)) {
-          for (const output of status.output) {
-            if (output.images) {
-              for (const image of output.images) {
-                if (!savedImages.has(image.url)) {
-                  try {
-                    await saveToResource(
-                      userId,
-                      image.url,
-                      image.name,
-                      service,
-                      workflowName,
-                      workflow,
-                      batchName
-                    );
-                    savedImages.add(image.url);
-                    console.log(`Saved streamed image to Supabase: ${image.url}, batch: ${batchName}`);
-                  } catch (saveError) {
-                    console.error('Failed to save streamed image:', saveError);
-                  }
-                }
-              }
-            }
-          }
-        }
-        
         workflowStorage.delete(jobId);
-        console.log(`Total images saved for job ${jobId}: ${savedImages.size}`);
+        console.log(`Job completed. Total images saved: ${savedImages.size}`);
       }
     });
 
