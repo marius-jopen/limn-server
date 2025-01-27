@@ -11,80 +11,50 @@ router.post('/a1111-runpod-serverless-run', async (req, res) => {
   try {
     const { info, data, request } = await ApiCallRun(req.body);    
     workflowStorage.set(data.id, req.body.input.workflow);
-    
     res.json({ info, request, data });
   } catch (error) {
     console.error('Run endpoint error:', error);
-    res.status(500).json({ 
-      error: 'Failed to process workflow',
-      message: error.message
-    });   
+    res.status(500).json({ error: 'Failed to process workflow', message: error.message });   
   }
 });
 
 router.get('/a1111-runpod-serverless-status/:jobId', async (req, res) => {
   try {
     const status = await ApiCallStatus(req.params.jobId);
-    console.log('A1111 status response:', status); // Debug log
     
     if (status.status === 'COMPLETED' && status.output?.[1]?.images?.[0]) {
-      console.log('A1111 image processing - status completed'); // Debug log
       const { url: imageUrl, name: imageName } = status.output[1].images[0];
-      console.log('A1111 image details:', { imageUrl, imageName }); // Debug log
-      
       const workflow = workflowStorage.get(req.params.jobId);
       const userId = req.query.userId || req.headers['user-id'];
       const service = req.query.service || req.headers['service'];
       const workflowName = req.query.workflow || req.headers['workflow'];
       
-      console.log('A1111 save parameters:', { userId, service, workflowName }); // Debug log
-      
       if (!userId) {
-        console.warn('No userId provided for saving image');
         return res.status(400).json({ error: 'Missing userId parameter' });
       }
 
       try {
-        await saveToResource(
-          userId, 
-          imageUrl, 
-          imageName, 
-          service, 
-          workflowName,
-          workflow
-        );
-        console.log('A1111 save successful'); // Debug log
+        await saveToResource(userId, imageUrl, imageName, service, workflowName, workflow);
         workflowStorage.delete(req.params.jobId);
       } catch (saveError) {
-        console.error('Failed to save image:', saveError);
-        return res.status(500).json({ 
-          error: 'Failed to save image',
-          message: saveError.message 
-        });
+        return res.status(500).json({ error: 'Failed to save image', message: saveError.message });
       }
     }
     
     res.json(status);
   } catch (error) {
     console.error('Status check failed:', error);
-    res.status(500).json({ 
-      error: 'Status check failed', 
-      message: error.message 
-    });   
+    res.status(500).json({ error: 'Status check failed', message: error.message });   
   }
 });
 
 router.get('/a1111-runpod-serverless-health', async (req, res) => {
   try {
     const healthStatus = await ApiCallHealth();
-    
     res.json(healthStatus);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ 
-      error: 'Health check failed',
-      message: error.message 
-    });   
+    console.error('Health check failed:', error);
+    res.status(500).json({ error: 'Health check failed', message: error.message });   
   }
 });
 
