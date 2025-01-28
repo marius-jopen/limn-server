@@ -28,13 +28,14 @@ router.get('/a1111-runpod-serverless-status/:jobId', async (req, res) => {
       const userId = req.query.userId || req.headers['user-id'];
       const service = req.query.service || req.headers['service'];
       const workflowName = req.query.workflow || req.headers['workflow'];
-      
+      const executionTime = status.executionTime;
+
       if (!userId) {
         return res.status(400).json({ error: 'Missing userId parameter' });
       }
 
       try {
-        await saveToResource(userId, imageUrl, imageName, service, workflowName, workflow);
+        await saveToResource(userId, imageUrl, imageName, service, workflowName, workflow, executionTime);
         workflowStorage.delete(req.params.jobId);
       } catch (saveError) {
         return res.status(500).json({ error: 'Failed to save image', message: saveError.message });
