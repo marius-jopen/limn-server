@@ -1,5 +1,3 @@
-import { saveToResource } from '../../supabase/save.js';
-
 async function ApiCallStream(jobId, res, onCompleted = null) {
   // Set streaming headers
   res.setHeader('Content-Type', 'text/event-stream');
@@ -21,7 +19,7 @@ async function ApiCallStream(jobId, res, onCompleted = null) {
     }
 
     const statusData = await statusResponse.json();
-    console.log(`Status check for job ${jobId}:`, statusData);
+    // console.log(`Status check for job ${jobId}:`, statusData);
 
     // Send the status update
     res.write(`data: ${JSON.stringify(statusData)}\n\n`);
