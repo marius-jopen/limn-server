@@ -5,14 +5,12 @@ import ApiCallHealth from './apicall-health.js';
 import { saveToResource } from '../../supabase/save.js';
 
 const router = express.Router();
-
 const workflowStorage = new Map(); // Simple in-memory storage
 
 router.post('/comfyui-runpod-serverless-run', async (req, res) => {
   try {
     const { info, data, request } = await ApiCallRun(req.body);    
-    workflowStorage.set(data.id, req.body.input.workflow);
-    
+    workflowStorage.set(data.id, req.body.input.workflow);    
     res.json({ info, request, data });
   } catch (error) {
     console.error('Run endpoint error:', error);
@@ -47,8 +45,8 @@ router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
           imageName, 
           service, 
           workflowName,
-          workflow,
           executionTime,
+          workflow,
         );
         workflowStorage.delete(req.params.jobId);
       } catch (saveError) {
@@ -73,7 +71,6 @@ router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
 router.get('/comfyui-runpod-serverless-health', async (req, res) => {
   try {
     const healthStatus = await ApiCallHealth();
-    
     res.json(healthStatus);
   } catch (error) {
     console.error(error);

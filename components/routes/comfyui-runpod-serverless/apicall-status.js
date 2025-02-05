@@ -10,7 +10,7 @@ async function ApiCallStatus(jobId) {
     }
 
     const status = await response.json();
-    console.log('Raw RunPod Response:', JSON.stringify(status, null, 2));
+    // console.log('Raw RunPod Response:', JSON.stringify(status, null, 2));
 
     // Extract logs from the output if available
     let logs = [];
