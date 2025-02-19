@@ -25,32 +25,36 @@ router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
   try {
     const status = await ApiCallStatus(req.params.jobId);
     
-    if (status.status === 'COMPLETED' && status.output?.[0]?.images?.[0]) {
-      const { name: imageName, url: imageUrl } = status.output[0].images[0];
+    if (status.status === 'COMPLETED' && status.output?.[0]?.images?.length > 0) {
+      const images = status.output[0].images;
       const workflow = workflowStorage.get(req.params.jobId);
       const userId = req.query.userId || req.headers['user-id'];
       const service = req.query.service || req.headers['service'];
       const workflowName = req.query.workflow || req.headers['workflow'];
       
       if (!userId) {
-        console.warn('No userId provided for saving image');
+        console.warn('No userId provided for saving images');
         return res.status(400).json({ error: 'Missing userId parameter' });
       }
 
       try {
-        await saveToResource(
-          userId, 
-          imageUrl, 
-          imageName, 
-          service, 
-          workflowName,
-          workflow,
-        );
+        // Save each image in the batch
+        for (const image of images) {
+          const { name: imageName, url: imageUrl } = image;
+          await saveToResource(
+            userId, 
+            imageUrl, 
+            imageName, 
+            service, 
+            workflowName,
+            workflow,
+          );
+        }
         workflowStorage.delete(req.params.jobId);
       } catch (saveError) {
-        console.error('Failed to save image:', saveError);
+        console.error('Failed to save images:', saveError);
         return res.status(500).json({ 
-          error: 'Failed to save image',
+          error: 'Failed to save images',
           message: saveError.message 
         });
       }
