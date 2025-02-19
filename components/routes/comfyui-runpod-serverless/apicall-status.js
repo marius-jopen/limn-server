@@ -53,16 +53,7 @@ async function ApiCallStatus(jobId) {
         message: `Status: ${status.status}`,
         timestamp: new Date().toISOString()
     });
-
-    if (status.executionTime) {
-        logs.push({
-            type: 'worker',
-            level: 'info',
-            message: `Execution Time: ${status.executionTime}ms`,
-            timestamp: new Date().toISOString()
-        });
-    }
-
+    
     // Add logs to the status object
     status.logs = logs;
     status.endpointId = process.env.COMFY_SLS_ENDPOINT_ID;

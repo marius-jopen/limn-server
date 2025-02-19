@@ -31,7 +31,6 @@ router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
       const userId = req.query.userId || req.headers['user-id'];
       const service = req.query.service || req.headers['service'];
       const workflowName = req.query.workflow || req.headers['workflow'];
-      const executionTime = status.executionTime;
       
       if (!userId) {
         console.warn('No userId provided for saving image');
@@ -45,7 +44,6 @@ router.get('/comfyui-runpod-serverless-status/:jobId', async (req, res) => {
           imageName, 
           service, 
           workflowName,
-          executionTime,
           workflow,
         );
         workflowStorage.delete(req.params.jobId);
