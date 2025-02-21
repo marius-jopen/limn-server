@@ -6,7 +6,12 @@ import Endpoints from './components/routes/all-routes.js';
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors());
+// Update CORS configuration to handle credentials
+app.use(cors({
+    origin: 'http://localhost:5173', // Your frontend URL
+    credentials: true
+}));
+
 app.use(express.json());
 
 app.use('/api', Endpoints);
