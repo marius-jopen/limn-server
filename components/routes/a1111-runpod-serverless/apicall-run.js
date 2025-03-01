@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 async function ApiCallRun(request) {
-    console.log('Starting API call with request:', JSON.stringify(request, null, 2));
+    // console.log('Starting API call with request:', JSON.stringify(request, null, 2));
     
     const parameters = {
         input: {
@@ -12,7 +12,7 @@ async function ApiCallRun(request) {
         }
     };
 
-    console.log('Sending parameters to RunPod:', JSON.stringify(parameters, null, 2));
+    // console.log('Sending parameters to RunPod:', JSON.stringify(parameters, null, 2));
 
     try {
         const response = await fetch(`https://api.runpod.ai/v2/${process.env.A1111_SLS_ENDPOINT_ID}/run`, {

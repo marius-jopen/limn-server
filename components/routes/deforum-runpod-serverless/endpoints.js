@@ -19,7 +19,7 @@ router.post('/deforum-runpod-serverless-run', async (req, res) => {
       data: data
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ 
       error: 'Internal server error',
       message: error.message
@@ -33,7 +33,7 @@ router.get('/deforum-runpod-serverless-health', async (req, res) => {
     
     res.json(healthStatus);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ 
       error: 'Health check failed',
       message: error.message 
@@ -49,7 +49,7 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
     const workflowName = req.query.workflow || req.headers['workflow'];
     const batchName = req.query.batchName || req.headers['batch-name'] || extractBatchName(workflowStorage.get(jobId));
     
-    console.log(`Getting stream for job ${jobId}`);
+    // console.log(`Getting stream for job ${jobId}`);
     
     let savedImages = new Set(); // Track which images we've already saved
     
@@ -75,7 +75,7 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
                   savedImages.add(image.url);
                   console.log(`Saved streamed image to Supabase: ${image.url}, batch: ${batchName}`);
                 } catch (saveError) {
-                  console.error('Failed to save streamed image:', saveError);
+                  // console.error('Failed to save streamed image:', saveError);
                 }
               }
             }
@@ -100,21 +100,21 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
                   batchName
                 );
                 savedImages.add(image.url);
-                console.log(`Saved final image to Supabase: ${image.url}, batch: ${batchName}`);
+                // console.log(`Saved final image to Supabase: ${image.url}, batch: ${batchName}`);
               } catch (saveError) {
-                console.error('Failed to save final image:', saveError);
+                // console.error('Failed to save final image:', saveError);
               }
             }
           }
         }
         
         workflowStorage.delete(jobId);
-        console.log(`Job completed. Total images saved: ${savedImages.size}`);
+        // console.log(`Job completed. Total images saved: ${savedImages.size}`);
       }
     });
 
   } catch (error) {
-    console.error('Stream error:', error);
+    // console.error('Stream error:', error);
     if (!res.headersSent) {
       res.status(500).json({ 
         error: 'Stream failed',
@@ -139,7 +139,7 @@ function extractBatchName(workflow) {
     }
     return 'unknown-batch';
   } catch (error) {
-    console.error('Error extracting batch name:', error);
+    // console.error('Error extracting batch name:', error);
     return 'unknown-batch';
   }
 }
@@ -147,12 +147,12 @@ function extractBatchName(workflow) {
 router.post('/deforum-runpod-serverless-cancel/:jobId', async (req, res) => {
   try {
     const jobId = req.params.jobId;
-    console.log(`Cancelling job ${jobId}`);
+    // console.log(`Cancelling job ${jobId}`);
     
     const cancelData = await ApiCallCancel(jobId);
     res.json(cancelData);
   } catch (error) {
-    console.error('Cancel error:', error);
+    // console.error('Cancel error:', error);
     res.status(500).json({ 
       error: 'Cancel request failed',
       message: error.message 
