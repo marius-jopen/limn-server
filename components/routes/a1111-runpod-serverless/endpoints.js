@@ -2,7 +2,7 @@ import express from 'express';
 import ApiCallRun from './apicall-run.js';
 import ApiCallStatus from './apicall-status.js';
 import ApiCallHealth from './apicall-health.js';
-import { saveToResource } from '../../supabase/save.js';
+import { saveToResource } from '../../supabase/save-generated.js';
 
 const router = express.Router();
 const workflowStorage = new Map(); // Simple in-memory storage

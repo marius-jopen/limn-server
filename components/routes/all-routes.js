@@ -6,6 +6,7 @@ import ComfyuiRunPodServerlessEndpoints from './comfyui-runpod-serverless/endpoi
 import DeforumRunpodServerlessEndpoints from './deforum-runpod-serverless/endpoints.js';
 import CancelRunpodServerlessEndpoints from './cancel-runpod-serverless/endpoints.js';
 import supabaseEndpoints from './supabase/endpoints.js';
+import S3Endpoints from './s3/endpoints.js';
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.use(ComfyuiRunPodServerlessEndpoints);
 router.use(DeforumRunpodServerlessEndpoints);
 router.use(CancelRunpodServerlessEndpoints);
 router.use(supabaseEndpoints);
+router.use(S3Endpoints);
 
 export default router;

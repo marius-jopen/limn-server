@@ -20,6 +20,7 @@ async function saveToResource(userId, imageUrl, imageName, service, workflowName
                 service,
                 workflow_name: workflowName,
                 workflow_data: workflow,
+                type: 'generated',
                 ...(batchName && { batch_name: batchName })
             }])
             .select()
