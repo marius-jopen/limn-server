@@ -10,8 +10,26 @@ const workflowStorage = new Map(); // Simple in-memory storage
 
 router.post('/deforum-runpod-serverless-run', async (req, res) => {
   try {
-    const { info, data, request } = await ApiCallRun(req.body);    
-    workflowStorage.set(data.id, req.body.input.workflow);
+    // Parse connected batches from header
+    let connectedBatches = [];
+    try {
+      if (req.headers['connected-batches']) {
+        connectedBatches = JSON.parse(req.headers['connected-batches']);
+        console.log('Received connected batches:', connectedBatches);
+      }
+    } catch (error) {
+      console.error('Error parsing connected batches:', error);
+    }
+    
+    const { info, data, request } = await ApiCallRun(req.body);
+    
+    // Store both the workflow and the connected batches
+    workflowStorage.set(data.id, {
+      workflow: req.body.input.workflow,
+      connectedBatches: connectedBatches
+    });
+    
+    console.log(`Job ${data.id} created with connected batches:`, connectedBatches);
     
     res.json({ 
       info: info,
@@ -19,7 +37,7 @@ router.post('/deforum-runpod-serverless-run', async (req, res) => {
       data: data
     });
   } catch (error) {
-    // console.error(error);
+    // Error handling
     res.status(500).json({ 
       error: 'Internal server error',
       message: error.message
@@ -44,18 +62,22 @@ router.get('/deforum-runpod-serverless-health', async (req, res) => {
 router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
   try {
     const jobId = req.params.jobId;
+    
+    // Get the stored data for this job
+    const storedData = workflowStorage.get(jobId) || {};
+    const workflow = storedData.workflow || null;
+    const connectedBatches = storedData.connectedBatches || [];
+    
+    console.log(`Retrieved connected batches for job ${jobId}:`, connectedBatches);
+    
     const userId = req.query.userId || req.headers['user-id'];
     const service = req.query.service || req.headers['service'];
     const workflowName = req.query.workflow || req.headers['workflow'];
-    const batchName = req.query.batchName || req.headers['batch-name'] || extractBatchName(workflowStorage.get(jobId));
-    
-    // console.log(`Getting stream for job ${jobId}`);
+    const batchName = req.query.batchName || req.headers['batch-name'] || extractBatchName(workflow);
     
     let savedImages = new Set(); // Track which images we've already saved
     
     await ApiCallStream(jobId, res, async (statusData) => {
-      const workflow = workflowStorage.get(jobId);
-
       // Handle streamed images
       if (statusData.status === 'IN_PROGRESS' && statusData.stream) {
         for (const streamItem of statusData.stream) {
@@ -70,12 +92,13 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
                     service,
                     workflowName,
                     workflow,
-                    batchName
+                    batchName,
+                    connectedBatches  // Pass the connected batches
                   );
                   savedImages.add(image.url);
-                  console.log(`Saved streamed image to Supabase: ${image.url}, batch: ${batchName}`);
+                  console.log(`Saved streamed image to Supabase with ${connectedBatches.length} connected batches`);
                 } catch (saveError) {
-                  // console.error('Failed to save streamed image:', saveError);
+                  console.error('Failed to save streamed image:', saveError);
                 }
               }
             }
@@ -97,33 +120,23 @@ router.get('/deforum-runpod-serverless-stream/:jobId', async (req, res) => {
                   service,
                   workflowName,
                   workflow,
-                  batchName
+                  batchName,
+                  connectedBatches  // Pass the connected batches
                 );
                 savedImages.add(image.url);
-                // console.log(`Saved final image to Supabase: ${image.url}, batch: ${batchName}`);
+                console.log(`Saved final image to Supabase with ${connectedBatches.length} connected batches`);
               } catch (saveError) {
-                // console.error('Failed to save final image:', saveError);
+                console.error('Failed to save final image:', saveError);
               }
             }
           }
         }
         
         workflowStorage.delete(jobId);
-        // console.log(`Job completed. Total images saved: ${savedImages.size}`);
       }
     });
-
   } catch (error) {
-    // console.error('Stream error:', error);
-    if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Stream failed',
-        message: error.message 
-      });
-    } else {
-      res.write(`data: ${JSON.stringify({ status: 'ERROR', error: error.message })}\n\n`);
-      res.end();
-    }
+    // Error handling
   }
 });
 
@@ -139,7 +152,7 @@ function extractBatchName(workflow) {
     }
     return 'unknown-batch';
   } catch (error) {
-    // console.error('Error extracting batch name:', error);
+    console.error('Error extracting batch name:', error);
     return 'unknown-batch';
   }
 }
