@@ -21,6 +21,7 @@
     "express": "^4.19.2",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
+    "openai": "^4.96.0",
     "runpod-sdk": "^1.0.7",
     "uuid": "^11.1.0"
   }
